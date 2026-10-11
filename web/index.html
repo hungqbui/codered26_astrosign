@@ -7,7 +7,7 @@
   <meta name="description" content="Two-player ASL fingerspelling asteroid duel, controlled with hand tracking through your webcam." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@500;600;700;800;900&display=swap" rel="stylesheet" />
 </head>
 <body>
   <canvas id="game" aria-label="Game playfield"></canvas>
@@ -23,12 +23,12 @@
   <!-- START -->
   <section id="screen-start" class="screen">
     <div class="panel hero">
-      <div class="logo">CELESTI<span class="logo-b">SIGN</span></div>
+      <div class="logo">CELESTISIGN</div>
       <div class="tagline">Two-player ASL fingerspelling duel</div>
       <div class="mode-pick" role="radiogroup" aria-label="Game mode">
         <span class="mode-ind" aria-hidden="true"></span>
-        <button class="mode-btn" data-mode="versus" role="radio" aria-checked="true"><b>Versus</b><small>1 vs 1</small></button>
-        <button class="mode-btn" data-mode="boss" role="radio" aria-checked="false"><b>Co-op Boss</b><small>2 vs boss</small></button>
+        <button class="mode-btn" data-mode="versus" role="radio" aria-checked="true"><b>Versus</b></button>
+        <button class="mode-btn" data-mode="boss" role="radio" aria-checked="false"><b>Co-op Boss</b></button>
       </div>
       <!-- fixed-height stage: the mode's details cross-fade here, so the panel never resizes -->
       <div class="mode-stage">
@@ -53,7 +53,6 @@ Either player can hit anything on either side. Asteroids come faster."><input ty
         <button id="btn-start" class="btn primary">Start with webcam</button>
         <button id="btn-keyboard" class="btn ghost">Keyboard mode</button>
       </div>
-      <div id="powerups" class="powerups"></div>
       <details class="keys">
         <summary>Keyboard &amp; developer controls</summary>
         <ul>

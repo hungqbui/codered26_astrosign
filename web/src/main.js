@@ -1,5 +1,5 @@
 import { Sfx } from './audio/sfx.js';
-import { EFFECTS, EFFECT_KEYS } from './game/effects.js';
+import { EFFECT_KEYS } from './game/effects.js';
 import {
   applyLetter, confirmSpeed, createGame, drainEvents, spawnBubble, spawnRock, update,
 } from './game/engine.js';
@@ -10,10 +10,10 @@ import {
   CameraError, createLandmarker, HandTracker, loadHandModel, openCamera, WorkerHandTracker,
 } from './recognition/handTracker.js';
 import { compareToPose } from './recognition/poseCoach.js';
-import { drawIcon, drawSkeleton, outlinedText } from './render/draw.js';
+import { COLORS, drawSkeleton, outlinedText } from './render/draw.js';
 import { Renderer } from './render/renderer.js';
 import {
-  ambient, countdownPop, initLogo, magnetic, resultsIn, screenIn, setReducedMotion, switchMode, tiltCards, toastIn,
+  ambient, countdownPop, magnetic, resultsIn, screenIn, setReducedMotion, switchMode, toastIn,
 } from './ui/anim.js';
 import { GestureNav } from './ui/gestureNav.js';
 import { initTooltips } from './ui/tooltip.js';
@@ -129,57 +129,16 @@ async function boot() {
   renderer.setReduced(settings.reduced);
   app.confirmers = [0, 1].map(() => new GestureConfirmer(model.classes));
   window.addEventListener('resize', () => renderer.resize());
-  buildPowerupLegend();
   initTooltips();
   taunts = new TauntDirector({ say: (text, live) => renderer.boss.say(text, live) });
   nav = new GestureNav({ templates: app.templates, legend: $('nav-legend') });
   setReducedMotion(settings.reduced);
-  initLogo(document.querySelector('.logo'));
   magnetic();
-  tiltCards($('powerups'));
   ambient();
   syncToggles();
   setState('start');
   autoStartCamera(); // hand tracking from the first screen
   requestAnimationFrame(frame);
-}
-
-function buildPowerupLegend() {
-  const root = $('powerups');
-  for (const k of EFFECT_KEYS) {
-    const d = EFFECTS[k];
-    const div = document.createElement('div');
-    div.className = 'pu';
-    div.dataset.effect = k;
-    div.tabIndex = 0; // focusable, so the description tooltip also works from the keyboard
-    const c = document.createElement('canvas');
-    c.width = c.height = 96;
-    const g = c.getContext('2d');
-    g.shadowColor = d.color;
-    g.shadowBlur = 12;
-    g.strokeStyle = d.color;
-    g.lineWidth = 4;
-    g.beginPath();
-    g.arc(48, 48, 40, 0, Math.PI * 2);
-    g.stroke();
-    drawIcon(g, d.icon, 48, 48, 44, d.color);
-    div.append(c);
-    div.insertAdjacentHTML('beforeend', `<b style="color:${d.color}">${d.name}</b>`);
-    root.append(div);
-  }
-  updatePowerupTips();
-}
-
-/** Orb descriptions (shown on hover) follow the selected mode and the shared-orbs option. */
-const SHAREABLE = ['shield', 'freeze', 'haste', 'reflect', 'nova'];
-function updatePowerupTips() {
-  const coop = settings.mode === 'boss';
-  document.querySelectorAll('.pu').forEach((el) => {
-    const d = EFFECTS[el.dataset.effect];
-    let text = coop ? d.coopBlurb : d.blurb;
-    if (coop && settings.shareOrbs && SHAREABLE.includes(el.dataset.effect)) text += ' (both players)';
-    el.dataset.tip = `${d.name}\n${text}`;
-  });
 }
 
 // ---------------- camera ----------------
@@ -468,14 +427,8 @@ function finish() {
   const w = g.winner;
   const el = $('winner');
   if (g.mode === 'boss') return finishBoss(g, el);
-  if (w === 'draw') {
-    el.textContent = 'DRAW!';
-    el.style.color = '#fff';
-  } else {
-    el.textContent = `${PLAYER_NAMES[w].toUpperCase()} WINS!`;
-    el.style.color = PLAYER_COLORS[w];
-    el.style.textShadow = `0 0 24px ${PLAYER_COLORS[w]}`;
-  }
+  el.textContent = w === 'draw' ? 'DRAW!' : `${PLAYER_NAMES[w].toUpperCase()} WINS!`;
+  el.style.setProperty('--wc', w === 'draw' ? '#c79bff' : PLAYER_COLORS[w]);
   for (const side of [0, 1]) {
     const p = g.players[side];
     const attempts = p.hits + p.misses;
@@ -500,8 +453,7 @@ function finish() {
 function finishBoss(g, el) {
   const won = g.winner === 'team';
   el.textContent = won ? 'VICTORY!' : 'DEFEATED';
-  el.style.color = won ? '#ffd23f' : '#ff4a5a';
-  el.style.textShadow = `0 0 24px ${won ? '#ffd23f' : '#ff4a5a'}`;
+  el.style.setProperty('--wc', won ? COLORS.accent : COLORS.danger);
   const dmg = g.boss.damageBy;
   const mvp = dmg[0] === dmg[1] ? -1 : dmg[0] > dmg[1] ? 0 : 1;
   const mm = Math.floor(g.t / 60);
@@ -660,11 +612,10 @@ function startTutorialOrGame() {
 function syncMode(animate = false) {
   document.querySelectorAll('.mode-btn').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.mode === settings.mode)));
   switchMode(settings.mode, !animate);
-  updatePowerupTips();
   $('opt-share-orbs').checked = settings.shareOrbs;
   $('opt-share-targets').checked = settings.shareTargets;
 }
-$('opt-share-orbs').onchange = (e) => { settings.shareOrbs = e.target.checked; saveSettings(); updatePowerupTips(); };
+$('opt-share-orbs').onchange = (e) => { settings.shareOrbs = e.target.checked; saveSettings(); };
 $('opt-share-targets').onchange = (e) => { settings.shareTargets = e.target.checked; saveSettings(); };
 document.querySelectorAll('.mode-btn').forEach((b) => {
   b.onclick = () => { setMode(b.dataset.mode); sfx.unlock(); sfx.click(); };
@@ -826,6 +777,7 @@ function tickCountdown(dt) {
     c.shown = i;
     const el = $('count');
     el.textContent = steps[i];
+    el.classList.toggle('go', i === steps.length - 1);
     countdownPop(el);
     sfx.countdown(i === steps.length - 1);
   }
