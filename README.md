@@ -13,11 +13,14 @@ Language to blast them. One webcam, two players, no controllers, all in the brow
 ![three.js](https://img.shields.io/badge/three.js-0.186-000000?logo=threedotjs&logoColor=white)
 ![Tests](https://img.shields.io/badge/tests-70_passing-2ea44f)
 
+### [▶ Play it live](https://celestisign.64.177.46.240.sslip.io/)
+
+<sub>Open it in Chrome, Edge, Firefox or Safari on a laptop with a webcam and allow camera access. No install needed.</sub>
+
 [Why it matters](#-why-it-matters) ·
 [Quick start](#-quick-start) ·
 [How to play](#-how-to-play) ·
 [Game modes](#-game-modes) ·
-[Power-ups](#-power-ups) ·
 [How it works](#-how-it-works) ·
 [Development](#-development)
 
@@ -54,14 +57,6 @@ around them who can't sign.
 | 💼 **55% vs 72%** | of deaf vs hearing people in the US were employed, on average, in 2020–2024.<sup>[5]</sup> |
 | 🏥 **48.5%** | of deaf participants in one district study in Ghana reported a misdiagnosis caused by communication barriers, and 44.3% avoided healthcare altogether.<sup>[6]</sup> |
 
-```mermaid
-xychart-beta
-    title "US employment rate, 2020–2024 average (%)"
-    x-axis ["Hearing people", "Deaf people"]
-    y-axis "Employed (%)" 0 --> 100
-    bar [72, 55]
-```
-
 ### People want to learn, and games help
 
 - **American Sign Language is the 3rd most-studied language at US colleges**, behind only
@@ -77,6 +72,10 @@ CelestiSign is built on the same idea: **you learn a letter by signing it**, wit
 shows exactly which finger to fix, and a friend next to you to make it fun. Fingerspelling is
 only a small first step into a full language, but it's a step anyone can take with a laptop and
 a webcam.
+
+📊 **Charts and full data:** [`impact/`](impact/README.md) has eight sourced charts covering
+hearing-loss projections, the shortage of specialists, the employment and education gaps, ASL's
+growth at US colleges, and the evidence that games help people learn.
 
 > **A note on words.** Prefer *Deaf* and *hard of hearing*. Terms like "deaf-mute" or "deaf and
 > dumb" are outdated and considered offensive. Many deaf people use their voice, and sign
@@ -101,6 +100,9 @@ a webcam.
 ---
 
 ## 🚀 Quick start
+
+> **Just want to play?** The game is hosted at **<https://celestisign.64.177.46.240.sslip.io/>**.
+> The steps below are for running it yourself.
 
 > **Requirements:** Node.js 20.19+ or 22.12+ (for Vite 8), a webcam, and a modern Chromium, Firefox or Safari browser.
 
@@ -317,44 +319,6 @@ All numbers live in `BOSS` in `web/src/game/boss.js` and are unit-tested in
 
 ---
 
-## 🫧 Power-ups
-
-Bubbles appear from about 26 s onward, roughly every 11–18 s per side. They float in the upper
-field and need **3–4 letters** before their deadline ring runs out (7.5–10 s). If the deadline
-passes, they escape harmlessly. Each bubble's effect is picked when it spawns, from the effects
-allowed at that moment, so cooldowns and grace periods always hold.
-
-| Orb | Look | Effect | Balance |
-|---|---|---|---|
-| 🎯 **Attack** | red crosshair | 2–4 extra asteroids drop on the opponent after a 1.4 s warning | 16 s cooldown · victim gets 10 s grace |
-| ⏳ **Slow** | violet hourglass | Opponent's ring fills at **half speed** for 6 s | 16 s cooldown · 10 s grace after it ends |
-| 🛡️ **Shield** | gold hexagon | A dome absorbs the next impact (expires after 25 s) | Not offered while active |
-| ➕ **Heal** | green plus | +20 HP (max 100) | More common below 50 HP · never at full health |
-| ❄️ **Freeze** | ice-blue snowflake | Everything on **your** side pauses for 4 s, and you can still shoot | 14 s cooldown |
-| 💥 **Nova** | orange starburst | Detonates every asteroid on **your** side (half points each) | 20 s cooldown · more common when crowded |
-| ⚡ **Haste** | lime bolt | Your ring fills **1.6× faster** for 7 s (Haste + Slow = 0.8×) | 16 s cooldown |
-| 🪞 **Reflect** | prismatic mirror | The next Attack, Slow or Leech aimed at you **bounces back** (15 s) | Not offered while active |
-| 🩸 **Leech** | crimson droplet | Steals 12 HP from the opponent (never below 1) | 18 s cooldown · 10 s grace · opponent must have > 25 HP |
-
-<details>
-<summary><b>🎆 What breaking an orb looks like</b></summary>
-<br>
-
-1. **The break:** a short hit-stop (game time nearly freezes for ~0.1 s), a zoom punch, glass
-   shards, light rays, a colour flash over that half, and a shatter sound.
-2. **The flight:** the orb's icon flies to whoever it affects. A reflected orb visibly hits the
-   barrier and bounces back.
-3. **The landing:** a sub-bass hit, a big banner (e.g. *"LEECH → Player 2 · 12 HP stolen"*), and
-   an orb-specific finisher: a Nova shockwave, frost cracks, a healing light column, speed
-   streaks, slow ripples, a red alarm border, prism arcs, or a leech beam carrying health
-   between the bases.
-
-Reduced-motion mode drops the hit-stop, zoom, flash and rays.
-
-</details>
-
----
-
 ## 🧠 How it works
 
 ```mermaid
@@ -431,54 +395,6 @@ runs off the main thread:
 
 ---
 
-## ⌨️ Controls & settings
-
-**Keyboard mode** (on the start screen, or after a camera error) plays the whole game without
-a webcam. The keys below also work as developer shortcuts during webcam play.
-
-| Key | Action |
-|---|---|
-| <kbd>a</kbd>–<kbd>y</kbd> | Confirm that letter for Player 1 |
-| <kbd>Shift</kbd> + letter | Confirm that letter for Player 2 |
-| <kbd>1</kbd>–<kbd>9</kbd> | Spawn an Attack / Slow / Shield / Heal / Freeze / Nova / Haste / Reflect / Leech orb for P1 (<kbd>Shift</kbd> for P2) |
-| <kbd>0</kbd> | Jump one level |
-| <kbd>`</kbd> | Debug overlay: frame rates, top-3 probabilities, handedness, confirmation state |
-| <kbd>Esc</kbd> | Pause / resume |
-| <kbd>Enter</kbd> | Start / rematch / resume |
-
-**URL options**
-
-| Option | Effect |
-|---|---|
-| `?delegate=GPU` | Runs MediaPipe on WebGL. It's first checked against a bundled hand photo, because some WebGL stacks initialise but silently detect nothing. Falls back to CPU if needed. Implies main-thread tracking. |
-| `?worker=0` | Forces main-thread tracking instead of the Web Worker |
-
-**Accessibility**
-
-- 🔊 **Sound** toggle. All audio is synthesised live with Web Audio.
-- 🌙 **Reduced motion** toggle (on by default when the OS asks for it). It turns off screen
-  shake, hand trails, background drift, blinking and most particles.
-- Both settings are remembered between sessions.
-- Letters always have a dark outline and stay readable over effects.
-
-<details>
-<summary><b>🎵 How the musical pops work</b></summary>
-<br>
-
-Inspired by *Tetris Effect*. Destroyed asteroids play notes in **D major** over a slow
-D → Bm → G → A progression that changes every 3.2 s, so both players always harmonise.
-
-- A single pop plays a chord tone that climbs with your combo, so a streak becomes a melody.
-- Popping several targets with one sign plays a strummed chord over a low root. Four or more
-  targets add a ninth on top.
-- A Nova sweep plays a big, wide chord. Sequence steps play soft passing notes.
-- Everything runs through a light echo and is panned to the player's side
-  (`popNote` / `popChord` in `web/src/audio/sfx.js`).
-
-</details>
-
----
-
 ## 🛠️ Development
 
 ### Project layout
@@ -501,6 +417,8 @@ web/                                the game (Vite + vanilla JS + Canvas 2D, run
 └── test/                           node:test suites (+ parity fixtures from training)
 
 training/                           datasets, landmark extraction, training, evaluation, export
+
+impact/                             sourced charts + data on why this matters (not used by the game)
 ```
 
 ### Optional: live boss taunts (Gemini)
