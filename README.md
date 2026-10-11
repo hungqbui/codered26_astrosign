@@ -1,406 +1,552 @@
-# CelestiSign
+<div align="center">
 
-A two-player, webcam-controlled ASL fingerspelling game. The players' **hands** are the
-controllers. One webcam tracks both players with
-MediaPipe Hand Landmarker, and a classifier trained for this project reads the ASL letter
-each hand is making. Asteroids carrying letters fall toward each player's base, and signing
-the letter blasts them.
+# ✦ CelestiSign
 
+**A two-player ASL fingerspelling game. Your hands are the controllers.**
+
+Asteroids carrying letters fall toward each player's base. Sign the letter in American Sign
+Language to blast them. One webcam, two players, no controllers, all in the browser.
+
+![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)
+![MediaPipe](https://img.shields.io/badge/MediaPipe-Hand_Landmarker-0097A7?logo=google&logoColor=white)
+![TensorFlow.js](https://img.shields.io/badge/TensorFlow.js-4.22-FF6F00?logo=tensorflow&logoColor=white)
+![three.js](https://img.shields.io/badge/three.js-0.186-000000?logo=threedotjs&logoColor=white)
+![Tests](https://img.shields.io/badge/tests-70_passing-2ea44f)
+
+[Why it matters](#-why-it-matters) ·
+[Quick start](#-quick-start) ·
+[How to play](#-how-to-play) ·
+[Game modes](#-game-modes) ·
+[Power-ups](#-power-ups) ·
+[How it works](#-how-it-works) ·
+[Development](#-development)
+
+</div>
+
+---
+
+## ✨ Highlights
+
+| | |
+|---|---|
+| 🖐️ **Hands are the controller** | MediaPipe tracks both players' hands from one webcam. A custom classifier reads the ASL letter each hand is making. |
+| ⚔️ **Two ways to play** | **Versus:** a fair duel where both players get the same asteroid stream. **Co-op Boss:** team up against *THE SILENCER*. |
+| 🧑‍🏫 **Learn as you play** | The practice round has a **3D pose coach**: a ghost hand shows the target letter and each of your fingers turns green, amber or red. |
+| 🙌 **Hands-free menus** | Every button has an ASL letter badge. Hold the pose and it fires, so you never need to touch the keyboard. |
+| 🎵 **Musical combos** | Destroyed asteroids play notes over a D-major progression, so both players always harmonise. A combo streak becomes a melody. |
+| 💻 **Runs on any laptop** | Everything runs on the CPU in the browser. Hand tracking runs in a Web Worker, so rendering stays smooth. |
+
+**Letters in play:** `B` `C` `F` `H` `I` `K` `L` `N` `O` `Q` `V` `W` `X` `Y`
+(the 14 letters the classifier recognises most reliably on datasets it was never trained on).
+
+---
+
+## 💙 Why it matters
+
+Deafness is common. What deaf people struggle with is less the hearing itself than the people
+around them who can't sign.
+
+| | |
+|---|---|
+| 🌍 **430 million** | people worldwide need rehabilitation for disabling hearing loss, over 5% of the world's population. By **2050**, nearly **2.5 billion** people are expected to have some degree of hearing loss.<sup>[1]</sup> |
+| 🤟 **70 million+** | deaf people use **more than 300** different sign languages. Over 80% of them live in developing countries.<sup>[2]</sup> |
+| 👪 **More than 90%** | of deaf children are born to **hearing parents**,<sup>[3]</sup> most of whom have no prior knowledge of a sign language.<sup>[4]</sup> For many deaf children, the communication gap starts at home. |
+| 💼 **55% vs 72%** | of deaf vs hearing people in the US were employed, on average, in 2020–2024.<sup>[5]</sup> |
+| 🏥 **48.5%** | of deaf participants in one district study in Ghana reported a misdiagnosis caused by communication barriers, and 44.3% avoided healthcare altogether.<sup>[6]</sup> |
+
+```mermaid
+xychart-beta
+    title "US employment rate, 2020–2024 average (%)"
+    x-axis ["Hearing people", "Deaf people"]
+    y-axis "Employed (%)" 0 --> 100
+    bar [72, 55]
 ```
-web/        the game (Vite + vanilla JS + Canvas 2D, runs fully in the browser)
-training/   dataset download, landmark extraction, classifier training, evaluation, export
-```
 
-## Quick start
+### People want to learn, and games help
+
+- **American Sign Language is the 3rd most-studied language at US colleges**, behind only
+  Spanish and French, with 107,899 enrollments in fall 2021.<sup>[7]</sup>
+- **Games make learners more motivated.** A meta-analysis of experimental studies found a
+  moderate positive effect of gamification on learner motivation (Hedges' *g* = 0.54).<sup>[8]</sup>
+- **Recognition games are already being used to teach sign language.** *PopSign*, built by
+  RIT/NTID, Google and Georgia Tech, is a bubble-shooter that helps hearing parents of deaf
+  children learn ASL. In a 20-person study, having novices *produce* signs in the game was
+  more efficient for building ASL skills than a recognition-only version.<sup>[9]</sup>
+
+CelestiSign is built on the same idea: **you learn a letter by signing it**, with a coach that
+shows exactly which finger to fix, and a friend next to you to make it fun. Fingerspelling is
+only a small first step into a full language, but it's a step anyone can take with a laptop and
+a webcam.
+
+> **A note on words.** Prefer *Deaf* and *hard of hearing*. Terms like "deaf-mute" or "deaf and
+> dumb" are outdated and considered offensive. Many deaf people use their voice, and sign
+> languages are complete languages with their own grammar.
+
+<details>
+<summary><b>📚 Sources</b></summary>
+<br>
+
+1. World Health Organization, [*Deafness and hearing loss* fact sheet](https://www.who.int/news-room/fact-sheets/detail/deafness-and-hearing-loss) (3 March 2026).
+2. United Nations, [International Day of Sign Languages](https://www.un.org/en/observances/sign-languages-day), citing the World Federation of the Deaf.
+3. NIDCD (US National Institutes of Health), [Quick Statistics About Hearing](https://www.nidcd.nih.gov/health/statistics/quick-statistics-hearing).
+4. [*Hearing parents learning sign language: a call for systemic changes*](https://cnlse.es/es/recursos/biblioteca/hearing-parents-learning-sign-language-a-call-for-systemic-changes), *Journal of Deaf Studies and Deaf Education* (2026).
+5. National Deaf Center data (US Census Bureau ACS), reported in [*For Deaf Workers, A Long Road To Closing An Employment Gap*](https://www.disabilityscoop.com/2026/07/07/for-deaf-workers-a-long-road-to-closing-an-employment-gap/32073/), Disability Scoop (July 2026).
+6. Cross-sectional study of 167 deaf people and 20 healthcare providers in one Ghanaian district, [AAMUSTED repository](https://ir.aamusted.edu.gh/handle/123456789/523). A single small study, so it shouldn't be read as a global rate.
+7. Modern Language Association, *Enrollments in Languages Other Than English in US Institutions of Higher Education, Fall 2021*, summarised on [Wikipedia](https://en.wikipedia.org/wiki/List_of_most_commonly_learned_second_languages_in_the_United_States).
+8. [*The Effect of Gamification on Learner Motivation: A Meta-Analysis Study*](https://www.ceeol.com/search/article-detail?id=1084268) (2022).
+9. [*PopSignAI: Towards Using Sign Language Recognition Games to Improve American Sign Language Learning in Novice Signers*](https://cnlse.es/es/recursos/biblioteca/popsignai-towards-using-sign-language-recognition-games-to-improve-american-sign-language-learning-in-novice-signers) (IUI 2026); [RIT news on PopSign](https://www.rit.edu/news/parents-deaf-children-can-more-easily-learn-sign-language-thanks-powerful-tech-collaboration).
+
+</details>
+
+---
+
+## 🚀 Quick start
+
+> **Requirements:** Node.js 20.19+ or 22.12+ (for Vite 8), a webcam, and a modern Chromium, Firefox or Safari browser.
 
 ```bash
 cd web
-npm install        # also copies the MediaPipe WASM runtime + hand model into public/
-npm run dev        # https://localhost:5173 or https://<server-ip>:5173 (self-signed cert: accept the warning once)
-npm test           # unit tests: classifier parity with Python, gesture logic, game engine
-npm run build      # static site in web/dist/ (relative paths, host anywhere over https)
+npm install    # also copies the MediaPipe WASM runtime + hand model into public/
+npm run dev    # → https://localhost:5173  (or https://<your-ip>:5173 from another device)
 ```
 
-There is no server component. The classifier, a TensorFlow.js model in
-`public/models/asl_tfjs/`, is already trained. To retrain it, see [training/README.md](training/README.md).
+The dev server uses a **self-signed certificate** because browsers only allow webcam access on
+secure pages. Accept the warning once.
 
-## How to play
+| Command | What it does |
+|---|---|
+| `npm run dev` | Dev server over HTTPS, reachable on your LAN |
+| `npm test` | Unit tests: classifier parity with Python, gesture logic, game engine, boss, pose coach |
+| `npm run build` | Static site in `web/dist/` with relative paths. Host it anywhere over HTTPS. |
+| `npm run preview` | Serves the production build (includes the optional Gemini taunt endpoint) |
 
-1. **Start with webcam.** Both players stand side by side in front of one camera.
-   **Player 1 is whoever's hand is on the left of the screen, Player 2 the one on the right.** Each
-   player signs with one hand, and either hand works. The game detects whether it's a left or
-   right hand and shows the pose hints for that hand.
-2. **Camera setup.** A live view shows each player's tracked hand and predicted letter. When
-   both hands are tracked, both players hold a flat **B** to start practice, or anyone holds
-   **Y** to skip straight to the game. See *Hands-free menus* below.
-3. **Practice round.** Each player signs four letters at their own pace on stationary asteroids,
-   with a **pose coach** for players who don't know the alphabet yet:
-   * step-by-step instructions for the letter
-   * a **three.js 3D view** of the target handshape (a translucent "ghost" hand), with the
-     player's own tracked hand overlaid live. Each finger turns green (matches), amber (nearly)
-     or red (adjust). The view sways to show depth and can be dragged to rotate.
-   * a match meter: the classifier's live probability for the target letter
-   * plain feedback, such as "Adjust: thumb, index" or "Fingers look right – turn your hand to
-     match the ghost"
-   
-   Finger checks compare the two outer joints of each finger with a reference pose. Each
-   finger's tolerance is learned from how much real signers vary (`hand_poses.json`). three.js
-   is loaded only when practice starts. If WebGL is unavailable, the coach falls back to the
-   steps and the 2D diagram.
-4. **3-2-1-GO**, then the duel. The **last player with health remaining wins**.
+The classifier (`web/public/models/asl_tfjs/`) is **already trained**. You only need
+[`training/`](training/README.md) if you want to retrain it.
+
+---
+
+## 🎮 How to play
+
+1. **Stand side by side** in front of one webcam. **Player 1 is the hand on the left of the
+   screen, Player 2 the hand on the right.** Either hand works. The game detects whether it's a
+   left or right hand and shows the matching pose hints.
+2. **Camera setup.** A live view shows each player's tracked hand and predicted letter. Both
+   players hold a flat **B** to start practice, or anyone holds **Y** to skip straight to the game.
+3. **Practice round.** Each player signs four letters on stationary asteroids, at their own pace,
+   with the [pose coach](#pose-coach) helping.
+4. **3‑2‑1‑GO!** In Versus, the **last player with health remaining wins**. In Co-op, the team
+   wins by **defeating the boss**.
 5. **Results** show score, kills, bubbles, accuracy, best combo and hits taken. For a rematch,
-   both hold **B** or press <kbd>Enter</kbd>.
-
-### Hands-free menus
-
-Hand tracking starts as soon as the page loads (the browser asks for the camera once), so every
-menu, including the very first screen, can be driven by handshapes. Ghost skeletons of the
-tracked hands drift behind the menus. Each button has a badge with
-the ASL pose and its letter. Hold that pose until the badge's ring fills (the same hold as
-in-game) and the button fires with a ripple. A **legend bar** at the bottom lists the current
-screen's poses, and highlights the one the camera sees and the one being held.
-
-| Pose | Means | Where |
-|---|---|---|
-| **B** (flat hand) | confirm / go | Start · Practice · Resume · Rematch · Try again |
-| **L** | leave | Back · Main menu |
-| **Y** | skip | Skip to game · Restart match |
-| **V** / **C** | Versus / Co-op | start screen |
-| **O** / **X** | toggle shared orbs / shared targets | start screen (Co-op) |
-| **K** | keyboard mode | camera error screen |
-
-* **Practice** (setup) and **Rematch** (results) need **both** players to hold B. Their badges
-  are marked ×2 and light up in each player's colour as they confirm.
-* **Navigation letters** are only accepted on menu screens. In-game letters are untouched.
-* **No camera:** if the camera is blocked or missing at launch, the page still works. The legend
-  says so, and *Start with webcam* retries with full error messages.
-
-### UI motion (GSAP)
-
-* **Screens:** they enter with a staggered panel animation. Each panel has a slowly rotating
-  gradient border.
-* **Logo:** the letters drop in, float, and lean away from the pointer.
-* **Buttons:** they have a dark fill with the gradient on the **border only**. On hover they lift,
-  glow, and the border gradient sweeps round. Pressing gives a springy bounce. Orb cards tilt
-  in 3D.
-* **Versus ↔ Co-op:** a highlight pill slides between the two mode buttons. Below them, a
-  fixed-height area cross-fades between the Versus summary and the Co-op options, so the panel
-  never changes size.
-* **Countdown and results:** the countdown pops. On the results screen the winner banner lands
-  with an elastic bounce and the stats count up.
-* **Reduced motion:** turns all of this off.
+   both players hold **B** (or press <kbd>Enter</kbd>).
 
 ### Signing a letter
 
-* Make the pose shown on your target and **hold it** until the ring around your letter fills
-  (about 0.4 s). The ring only fills while the smoothed classifier confidence is at least 0.6.
-* On confirmation your turret fires a beam at the target.
-* To use the **same letter again**, relax your hand or change pose briefly first. The ring
-  turns white and says "relax to repeat" until you do. A different letter counts immediately.
-* The bottom panel always shows:
-  * what the camera thinks you are signing, with its confidence
-  * the **next letter you need**, with a pose diagram and a one-line hint
-* The small webcam preview in the bottom centre shows both tracked skeletons and each
-  player's predicted letter.
+- Make the pose shown on your target and **hold it** until the ring around your letter fills
+  (about **0.4 s**). The ring only fills while the smoothed confidence is at least **0.6**.
+- Your turret fires a beam at **every** target on your side that needs that letter.
+- To use the **same letter again**, relax your hand briefly first. The ring turns white and
+  says "relax to repeat" until you do. A different letter counts immediately.
+- The bottom panel always shows what the camera thinks you're signing and the **next letter
+  you need**, with a pose diagram and a one-line hint.
 
-### Rules
+### Hands-free menus
 
-* Asteroids show their letter in the centre. **Sequence asteroids** (from level 2) show a
-  row of letter chips underneath: the current letter is highlighted white and finished
-  letters are ticked. They must be signed in order.
-* **Targeting rule:** a confirmed letter hits **every** asteroid, orb or shield node on *your*
-  side whose next required letter matches.
-  * Single-letter targets are destroyed; sequences waiting on that letter advance one step.
-  * Each kill counts toward your combo.
-  * Two or more kills from one sign show **MULTI ×N** and add a bonus of 100 per extra kill.
-  * One sign still counts as one letter for accuracy.
-  * Hits are resolved most-urgent first (least time left), then the older object.
-  * With no pose held, the most urgent target has rotating brackets around it.
-  * While you hold a pose, **every** target it will hit is locked on: brightened brackets, your
-    confirmation progress, a dashed aim line from your turret, and an ×N tag.
-* A letter that matches nothing is a **miss** and resets your combo.
-* An impact costs 12 HP, plus 6 for each unfinished letter on a sequence asteroid, and resets your combo.
-* **Score:**
-  * 100 per letter for a destroyed asteroid, 300 for a bubble, 25 for a partial hit
-  * a combo multiplier on top: ×1.25 every 3 kills, up to ×3
-* **Difficulty** rises every 22 s, up to level 12:
-  * asteroids spawn faster (every 3.0 s down to 1.05 s)
-  * they fall faster (10.5 s down to 5.2 s to cross the field)
-  * more can be on screen at once (3 up to 7)
-  * sequences get longer (single letters only at level 1, up to 4 letters from level 6)
-* **Both players receive the identical asteroid stream** from the same random seed. The
-  difference comes from skill and from power-ups.
+Hand tracking starts as soon as the page loads, so every menu can be driven by handshapes.
+Each button has a badge with its ASL pose. Hold the pose until the badge's ring fills. A legend
+bar at the bottom lists the poses available on the current screen.
 
-### Power-up bubbles
+| Pose | Means | Where |
+|:---:|---|---|
+| **B** (flat hand) | confirm / go | Start · Practice ×2 · Resume · Rematch ×2 · Try again |
+| **L** | leave | Back · Main menu |
+| **Y** | skip | Skip to game · Restart match |
+| **V** / **C** | Versus / Co-op | Start screen |
+| **O** / **X** | toggle shared orbs / shared targets | Start screen (Co-op) |
+| **K** | keyboard mode | Camera error screen |
+
+Buttons marked **×2** need **both** players to hold the pose. Navigation letters only count on
+menu screens and never interfere with gameplay.
+
+<a id="pose-coach"></a>
+<details>
+<summary><b>🧑‍🏫 The practice pose coach</b></summary>
+<br>
+
+For players who don't know the alphabet yet, practice shows:
+
+- step-by-step instructions for the letter
+- a **three.js 3D view** of the target handshape (a translucent "ghost" hand) with the player's
+  own tracked hand overlaid live. Each finger turns **green** (matches), **amber** (nearly) or
+  **red** (adjust). The view sways to show depth and can be dragged to rotate.
+- a **match meter**: the classifier's live probability for the target letter
+- plain feedback, such as *"Adjust: thumb, index"* or *"Fingers look right – turn your hand to
+  match the ghost"*
+
+Finger checks compare the two outer joints of each finger with a reference pose. Each finger's
+tolerance is learned from how much real signers vary (`hand_poses.json`). three.js is only
+loaded when practice starts. Without WebGL, the coach falls back to the steps and a 2D diagram.
+
+</details>
+
+---
+
+## ⚔️ Game modes
+
+### Versus
+
+Both players receive the **identical asteroid stream** from the same random seed, so the
+outcome depends only on skill and on power-ups.
+
+<details>
+<summary><b>📜 Full rules: targeting, scoring, difficulty</b></summary>
+<br>
+
+**Asteroids**
+- Each asteroid shows its letter in the centre. **Sequence asteroids** (from level 2) show a row
+  of letter chips that must be signed **in order**. The current letter is white and finished
+  letters are ticked.
+
+**Targeting**
+- A confirmed letter hits **every** asteroid, orb or shield node on *your* side whose next
+  required letter matches. Single-letter targets are destroyed. Sequences advance one step.
+- Two or more kills from one sign show **MULTI ×N** and add a bonus of 100 per extra kill.
+  For accuracy, one sign still counts as one letter.
+- Hits resolve most urgent first (least time left), then the older object.
+- With no pose held, rotating brackets mark the most urgent target. While you hold a pose,
+  **every** target it will hit is locked on: brighter brackets, your progress, a dashed aim
+  line from your turret and an ×N tag.
+
+**Misses and damage**
+- A letter that matches nothing is a **miss** and resets your combo.
+- An impact costs **12 HP**, plus **6** for each unfinished letter on a sequence asteroid, and
+  resets your combo.
+
+**Score**
+- 100 per letter for a destroyed asteroid, 300 for a bubble, 25 for a partial hit
+- Combo multiplier: ×1.25 every 3 kills, up to ×3
+
+**Difficulty** rises every 22 s, up to level 12:
+
+| | Level 1 | Max level |
+|---|---|---|
+| Spawn interval | 3.0 s | 1.05 s |
+| Time to cross the field | 10.5 s | 5.2 s |
+| On screen at once | 3 | 7 |
+| Sequence length | 1 letter | up to 4 (from level 6) |
+
+</details>
+
+### Co-op Boss: *THE SILENCER*
+
+On the start screen, choose **Co-op Boss** to team up against an all-seeing eye that drowns out
+communication. Setup, practice and controls are the same as in Versus.
+
+- **Shared team health (150).** Asteroids hitting either base drain the team pool.
+- **Every kill hurts the boss.** Each destroyed asteroid fires a bolt worth 10 damage per
+  letter, times your combo multiplier. Orbs add 20. The results screen names an **MVP**.
+- **Core link (the main co-op mechanic).** The boss opens its core and shows a four-letter
+  chain whose letters **alternate between players** (P2 → P1 → P2 → P1). Sign them in turn
+  before the ring runs out to deal **150 damage** and stun the boss for 3 s.
+- **Phases and shields.** At 66% and 33% health the boss changes colour, gains new attacks and
+  drops a **shield node on each side**. It's immune until **both** players break their node.
+- **It talks.** The boss taunts the players in a typed-out speech bubble, optionally written
+  live by Gemini ([setup](#optional-live-boss-taunts-gemini)).
+
+<details>
+<summary><b>👁️ Boss attacks, scaling and co-op options</b></summary>
+<br>
+
+**Telegraphed attacks.** About 1.3 s ahead, the eye charges and a warning appears over the
+target side:
+
+| Attack | Effect | From |
+|---|---|---|
+| **Volley** | Rocks on both sides | Phase 1 |
+| **Meteor** | One big 3–4-letter rock on one side | Phase 1 |
+| **Barrage** | Three fast singles on one side | Phase 2 |
+| **Curse** | Slows one player for 4 s | Phase 2 |
+
+**Health and scaling.** The boss has **4,500 HP**. Difficulty rises **continuously** as it
+weakens, rather than in steps at phase changes. From full health to nearly dead:
+
+| | Full health | Nearly dead |
+|---|---|---|
+| Asteroid difficulty level | 2 | 8 |
+| Gap between boss attacks | 6.5 s | 3.8 s |
+| Core link interval | 20 s | 13 s |
+| Time to finish a core link | 11 s | 8.5 s |
+
+If a shield node expires, the boss regenerates 8% of its health, capped at that phase's
+threshold. While the core is open, a letter that matches your turn advances the chain **and**
+still blasts every matching asteroid.
+
+**Co-op options** (start screen toggles, remembered between sessions, shown on the boss HUD):
+
+- **Shared power-ups** *(on by default)*: Shield, Freeze, Haste, Reflect and Nova apply to
+  **both** players, whoever clears the orb. Nova clears both sides and credits each player for
+  their own side. Turned off, these orbs only help the player who cleared them.
+- **Shared targets** *(off by default)*: either player can shoot anything on either side, and
+  the beam crosses the divider.
+  - A sign hits every matching target on **both** sides, most urgent first (ties: your own
+    side, then the older object). The shooter gets the score and boss damage.
+  - Asteroids spawn about twice as often (0.8× the versus interval instead of 1.6×), and two
+    more fit on screen per side.
+  - A letter whose target your teammate just cleared doesn't break your combo.
+  - Each side gets its own random stream. When a new target's first letter is already in play,
+    it's re-rolled once with 60% probability (`DUPLICATE_REROLL` in `web/src/game/words.js`).
+    That gives about a third fewer duplicates, while still allowing multi-kills.
+
+**Orbs in co-op:**
+
+| Orb | In boss mode |
+|---|---|
+| Attack | Hits the boss for 60 |
+| Slow | Slows the boss's attack timer |
+| Leech | 40 to the boss, +12 to the team |
+| Heal | +20 to the team |
+| Reflect | The next boss attack on each side becomes 50 damage to the boss |
+| Shield, Freeze, Nova, Haste | Applied to both players when shared power-ups is on |
+
+**Win and lose.** **VICTORY** when the boss reaches 0 HP, after a chain of explosions.
+**DEFEAT** if the team pool empties.
+
+All numbers live in `BOSS` in `web/src/game/boss.js` and are unit-tested in
+`web/test/boss.test.js`.
+
+</details>
+
+---
+
+## 🫧 Power-ups
 
 Bubbles appear from about 26 s onward, roughly every 11–18 s per side. They float in the upper
-field and need **3–4 letters** before their **deadline ring** runs out (7.5–10 s). If the
-deadline passes, they escape harmlessly.
+field and need **3–4 letters** before their deadline ring runs out (7.5–10 s). If the deadline
+passes, they escape harmlessly. Each bubble's effect is picked when it spawns, from the effects
+allowed at that moment, so cooldowns and grace periods always hold.
 
-| bubble | look | effect | balance |
+| Orb | Look | Effect | Balance |
 |---|---|---|---|
-| **Attack** | red, crosshair, spinning spikes | 2–4 extra single-letter asteroids drop on the opponent after a 1.4 s "INCOMING" warning | user cooldown 16 s; victim has a 10 s grace before the next attack |
-| **Slow** | violet, hourglass, slow ripples | opponent's confirmation ring fills at **half speed** for 6 s (their ring turns violet) | user cooldown 16 s; victim has a 10 s grace after it ends |
-| **Shield** | gold, shield, rotating hexagon | a dome absorbs the next impact (expires after 25 s, blinks near the end) | not offered while a shield is active |
-| **Heal** | green, plus sign, rising crosses | +20 HP (max 100) | offered more often below 50 HP; not offered at full health |
-| **Freeze** | ice blue, snowflake, crystal spikes | all asteroids and spawns on **your** side pause for 4 s; you can still shoot them | cooldown 14 s |
-| **Nova** | orange, starburst, pulsing core with orbiting embers | detonates every asteroid on **your** side (half points each) | cooldown 20 s; offered more often when your side is crowded |
-| **Haste** | lime, lightning bolt, crackling arcs | your confirmation ring fills **1.6× faster** for 7 s (Haste and Slow cancel out to 0.8×) | cooldown 16 s |
-| **Reflect** | prismatic (shifting rainbow), mirror icon, rotating facets | the next Attack, Slow or Leech aimed at you **bounces back** to the sender (lasts 15 s) | not offered while active |
-| **Leech** | crimson, droplet, falling drips | steals 12 HP from the opponent; never takes them below 1 HP | cooldown 18 s; victim has a 10 s grace; only offered while the opponent has > 25 HP |
+| 🎯 **Attack** | red crosshair | 2–4 extra asteroids drop on the opponent after a 1.4 s warning | 16 s cooldown · victim gets 10 s grace |
+| ⏳ **Slow** | violet hourglass | Opponent's ring fills at **half speed** for 6 s | 16 s cooldown · 10 s grace after it ends |
+| 🛡️ **Shield** | gold hexagon | A dome absorbs the next impact (expires after 25 s) | Not offered while active |
+| ➕ **Heal** | green plus | +20 HP (max 100) | More common below 50 HP · never at full health |
+| ❄️ **Freeze** | ice-blue snowflake | Everything on **your** side pauses for 4 s, and you can still shoot | 14 s cooldown |
+| 💥 **Nova** | orange starburst | Detonates every asteroid on **your** side (half points each) | 20 s cooldown · more common when crowded |
+| ⚡ **Haste** | lime bolt | Your ring fills **1.6× faster** for 7 s (Haste + Slow = 0.8×) | 16 s cooldown |
+| 🪞 **Reflect** | prismatic mirror | The next Attack, Slow or Leech aimed at you **bounces back** (15 s) | Not offered while active |
+| 🩸 **Leech** | crimson droplet | Steals 12 HP from the opponent (never below 1) | 18 s cooldown · 10 s grace · opponent must have > 25 HP |
 
-**Breaking an orb** is a set piece:
-* **The break:** a short hit-stop (game time nearly freezes for about 0.1 s), a zoom punch, glass shards, light rays, a colour flash over that half, and a shatter sound.
-* **The flight:** the orb's icon flies to whoever it affects. A reflected orb visibly hits the barrier and bounces back.
-* **The landing:** a sub-bass hit, a big banner (e.g. "LEECH → Player 2 · 12 HP stolen"), and a finisher specific to the orb:
-  * Nova shockwave
-  * frost cracks
-  * healing light column
-  * speed streaks
-  * slow ripples
-  * red alarm border
-  * prism arcs
-  * a leech beam carrying health between the bases
+<details>
+<summary><b>🎆 What breaking an orb looks like</b></summary>
+<br>
+
+1. **The break:** a short hit-stop (game time nearly freezes for ~0.1 s), a zoom punch, glass
+   shards, light rays, a colour flash over that half, and a shatter sound.
+2. **The flight:** the orb's icon flies to whoever it affects. A reflected orb visibly hits the
+   barrier and bounces back.
+3. **The landing:** a sub-bass hit, a big banner (e.g. *"LEECH → Player 2 · 12 HP stolen"*), and
+   an orb-specific finisher: a Nova shockwave, frost cracks, a healing light column, speed
+   streaks, slow ripples, a red alarm border, prism arcs, or a leech beam carrying health
+   between the bases.
 
 Reduced-motion mode drops the hit-stop, zoom, flash and rays.
 
-The effect a bubble carries is picked when it spawns, from the effects allowed at that moment,
-so cooldowns and grace periods are always respected.
+</details>
 
-### Co-op boss mode
+---
 
-On the start screen, choose **Co-op Boss** to team up against **THE SILENCER** (an all-seeing eye that drowns out communication) instead of
-fighting each other. Setup, practice and controls are the same.
+## 🧠 How it works
 
-* **Shared team health (150).** Asteroids hitting either base drain the team pool, shown under
-  the boss bar. A player's own Shield still protects their side.
-* **Every kill hurts the boss.** Each destroyed asteroid fires a bolt at it: 10 damage per letter,
-  times your combo multiplier. Orbs add 20. The HUD shows each player's boss damage, and the
-  results screen names an MVP.
-* **Telegraphed attacks.** About 1.3 s ahead, the boss's eye charges and a warning appears over
-  the target side:
-  * **Volley:** rocks on both sides.
-  * **Meteor:** a big 3–4-letter rock on one side.
-  * **Barrage:** three fast singles on one side (phase 2+).
-  * **Curse:** slows one player for 4 s (phase 2+).
-* **Core link (the main co-op mechanic).** Every 13–20 s (more often as it weakens) the boss opens its core and shows a
-  four-letter chain. The letters alternate between players (e.g. P2 → P1 → P2 → P1), and you must
-  sign them **in turn** before the ring runs out. Success deals 150 damage and stuns the boss for
-  3 s. While the core is open, a letter that matches your turn on the core advances the chain
-  **and** still blasts every matching asteroid.
-* **Health and difficulty.** The boss has **4,500 HP**. Difficulty rises **continuously** as
-  it weakens, rather than jumping at phase changes. From full health to nearly dead:
-  * the asteroid difficulty level climbs smoothly from 2 to 8, bringing faster spawns, faster
-    falls, more on screen and longer words
-  * the gap between boss attacks shrinks from 6.5 s to 3.8 s
-  * core links come more often (every 20 s down to 13 s) with less time to finish (11 s down to
-    8.5 s)
-* **Phases and shields.** At 66% and 33% health the boss enters a new phase: it changes colour
-  and gains new attacks. It also raises a shield and drops a **shield node
-  on each side**. It takes no damage until **both** players break their node. Let a node expire
-  and the boss regenerates 8% of its health, capped at that phase's threshold.
-* **Co-op options.** Two toggles on the start screen appear when Co-op Boss is selected. Both
-  are remembered, and the boss HUD shows which rules are active.
-  * **Shared power-ups** (on by default): Shield, Freeze, Haste, Reflect and Nova apply to
-    **both** players, whoever clears the orb. The icon splits and lands on both sides, with a
-    single "TEAM SHIELD!"-style banner. Nova clears both sides, and each player is credited for
-    their own side. Turned off, these orbs only help the player who cleared them. Attack, Slow,
-    Leech and Heal always act on the boss or the team pool.
-  * **Shared targets** (off by default): either player can shoot any asteroid, orb or shield
-    node on either side, and the beam crosses the divider.
-    * **Targeting:** a sign hits every matching target on **both** sides, most urgent first
-      (ties: your own side, then the older object).
-    * **Credit:** the shooter gets the score and the boss damage.
-    * **Balance:** asteroids spawn about twice as often (0.8× the versus interval instead of
-      1.6×), and two more fit on screen per side.
-    * **Combos:** a letter whose target your teammate just cleared doesn't break your combo.
-    * **Letters:** each side gets its own random asteroid stream (versus and personal-target
-      co-op keep identical streams). When a new target's first letter is already in play, it's
-      re-rolled once with 60% probability (`DUPLICATE_REROLL` in `web/src/game/words.js`). That
-      gives about a third fewer duplicates than pure chance; they still happen, so multi-kills
-      stay possible.
-    * **Shield nodes** can be broken by either player.
-    * **Core link** still alternates P1/P2.
-* **Orbs in co-op:**
+```mermaid
+flowchart LR
+    A[📷 Webcam frame] --> B["MediaPipe Hand Landmarker<br/><sub>2 hands · Web Worker · CPU/WASM</sub>"]
+    B --> C["PlayerAssigner<br/><sub>left half → P1, right → P2</sub>"]
+    C --> D["features.js<br/><sub>wrist-centred · scale-normalised<br/>left hands mirrored</sub>"]
+    D --> E["TF.js MLP classifier<br/><sub>averaged with mirror image</sub>"]
+    E --> F["GestureConfirmer<br/><sub>EMA → ≥ 0.6 → 420 ms hold<br/>→ release lock</sub>"]
+    F --> G[🎮 Game engine]
+```
 
-  | Orb | In boss mode |
-  |---|---|
-  | Attack | Hits the boss for 60 |
-  | Slow | Slows the boss's attack timer |
-  | Leech | 40 to the boss, +12 to the team |
-  | Heal | +20 to the team |
-  | Reflect | Both players: the next boss attack on each side becomes 50 damage to the boss (shared) |
-  | Shield, Freeze, Nova, Haste | Applied to both players (shared) |
-* **Taunts (Gemini).** THE SILENCER talks: a speech bubble beside its eye, typed out with
-  little voice blips.
-  * **When it speaks:** at the start, on attack telegraphs, at phase changes, when its shield or
-    core breaks or a core link is missed, on a player's miss streak, when the team is low, and
-    when it's nearly dead. Big moments always get a line; the rest are rate-limited.
-  * **Where the lines come from:** with a Gemini key configured, a batch of lines is requested
-    during the 3-2-1 countdown (about 3 s), so even the opening line is usually Gemini's; the
-    intro waits up to 2.5 s for it. The batch is refreshed at each phase change. When a player
-    keeps fumbling letters, the prompt asks for lines that tease them by name. The context sent is the phase, boss and team
-    health, the letters each player keeps fumbling (so it can tease "your N"), and the co-op
-    options. **No camera data is sent.** Live lines carry a small "✦ GEMINI" tag.
-  * **Without a key or network** (or in a static build), it uses built-in lines.
-  * **Setup:** copy `web/.env.local.example` to `web/.env.local` and set `GEMINI_API_KEY`. The
-    optional `GEMINI_MODEL` defaults to `gemini-3.5-flash-lite`. The key is read only by the
-    dev/preview server's `POST /api/taunts` endpoint (`web/server/taunts.js`) and never reaches
-    the browser. Lines are validated and sanitised: one sentence, at most 70 characters, PG,
-    and only about the players' play.
-* **Win and lose.** The fight ends in **VICTORY** when the boss's health reaches 0, after a
-  chain of explosions. It ends in **DEFEAT** if the team pool empties.
-* **Tuning.** All numbers live in `web/src/game/boss.js` (`BOSS`). The logic is unit-tested in
-  `web/test/boss.test.js`.
+### The classifier
 
-### Settings and accessibility
+A small MLP on **hand landmarks**, not images, so it's tiny and fast enough to run every frame
+for both hands. It was trained in TensorFlow/Keras and runs in the browser with TensorFlow.js.
 
-* **Sound** toggle in the top bar: all sound is synthesised with Web Audio.
-* **Musical pops (Tetris Effect style).** Destroyed asteroids play notes in D major over a slow
-  D → Bm → G → A progression, changing every 3.2 s, so both players always harmonise.
-  * A single pop plays a chord tone that climbs with your combo, so a streak becomes a melody.
-  * Popping several targets with one sign plays a strummed chord, one note per target, over a
-    low root. Four or more targets add a ninth on top.
-  * A Nova sweep plays a big, wide chord.
-  * Sequence steps play soft passing notes.
-  * All of it runs through a light echo and is panned to the player's side
-    (`popNote` / `popChord` in `web/src/audio/sfx.js`).
-* **Reduced motion** toggle (on by default when the OS asks for reduced motion). It turns off:
-  * screen shake
-  * hand trails
-  * background drift
-  * blinking
-  * most particles
-* Both settings are remembered between sessions.
-* Letters always have a dark outline and stay readable over effects. Floating text is drawn last.
-* On slow machines the renderer switches off canvas glow (`shadowBlur`) automatically.
-
-### Keyboard / developer controls
-
-| key | action |
+| | |
 |---|---|
-| <kbd>a</kbd>–<kbd>y</kbd> | confirm that letter for Player 1 |
-| <kbd>Shift</kbd>+letter | confirm that letter for Player 2 |
-| <kbd>1</kbd>–<kbd>9</kbd> / <kbd>Shift</kbd>+<kbd>1</kbd>–<kbd>9</kbd> | spawn an Attack / Slow / Shield / Heal / Freeze / Nova / Haste / Reflect / Leech orb for P1 / P2 |
-| <kbd>0</kbd> | jump one level |
-| <kbd>`</kbd> | debug overlay: frame rates, top-3 probabilities, handedness, confirmation state |
-| <kbd>Esc</kbd> | pause / resume |
-| <kbd>Enter</kbd> | start / rematch / resume |
+| **Data** | 3,864 static-letter samples from three public datasets (ASLNow! landmarks + two photo sets run through MediaPipe, each photo also flipped for real left-hand data) |
+| **Model** | 118 features → 128 → 128 → 64 → 24 classes · 41,560 parameters · picked by a 16-configuration hyperparameter search |
+| **Accuracy (5-fold CV)** | **96.4%** |
+| **Accuracy on an unseen dataset** | **86.6%** (nested estimate) |
+| **The 14 game letters** | **0.94** average F1 on unseen datasets |
+| **Not included** | **J** and **Z**, which are motion letters |
 
-**Keyboard mode** on the start screen, or after a camera error, plays the whole game without a webcam.
+Full methodology, per-letter results and the left-vs-right hand analysis are in
+[`training/README.md`](training/README.md) and
+[`training/reports/evaluation.md`](training/reports/evaluation.md).
 
-Everything runs on the player's CPU by default. The URL option `?delegate=GPU` opts MediaPipe into WebGL.
+<details>
+<summary><b>🔍 Recognition details: players, handedness, failure handling</b></summary>
+<br>
 
-## Recognition pipeline (browser)
-
-```
-webcam frame ──► MediaPipe Hand Landmarker (VIDEO mode, 2 hands, CPU / WASM by default)
-             ──► PlayerAssigner   which hand belongs to P1 / P2
-             ──► features.js      wrist-centred, size-normalised, aspect-corrected, left hands mirrored
-             ──► classifier.js    TensorFlow.js MLP (CPU backend), averaged with the mirror image
-             ──► GestureConfirmer EMA smoothing → threshold 0.6 → 420 ms hold → release lock
-             ──► game engine      targeting, sequences, effects
-```
-
-* **Player assignment** (`playerAssign.js`) goes **by screen side**, not by hand:
-  * With two hands, the left-most is P1 and the right-most is P2.
-  * A single hand goes to the half it's in. Near the midline it keeps its current player, so it
-    doesn't flicker between them.
-  * A player keeps their slot for 1.2 s after their hand vanishes, and duplicate detections are
-    merged.
-* **Handedness** is still detected for every hand (MediaPipe's label on the raw, un-mirrored
-  frame, which was checked against the training photos). It's used to:
-  * mirror left hands before classification
-  * show the guide cards, the HUD label and the 3D practice coach for the hand actually being used
-
-  The *Swap left/right detection* checkbox flips this for cameras that mirror in the driver.
-  It only affects hints, not who is Player 1.
-* **CPU by default:** MediaPipe runs on its WASM/XNNPACK CPU backend at 960×540, and the
-  classifier is plain JavaScript. No GPU is needed. With `?delegate=GPU`, the tracker first
-  checks the GPU path on a bundled hand photo, because some WebGL stacks initialise but
-  silently detect nothing, and falls back to CPU if needed.
-* **Missing hands:**
-  * after 0.7 s without your hand, your half shows "Player N: raise your hand"
-  * after 3.5 s the match auto-pauses ("Hands lost"), and resumes when both hands are back
-  * hiding the browser tab also pauses
-* **Low confidence:** the ring stays empty and shows "unsure – hold steady" with a greyed
-  letter. Nothing is ever fired below the threshold.
-* **Camera errors** (denied, not found, in use, insecure page, model failure) each get a
+- **Player assignment goes by screen side, not by hand.** With two hands, the left-most is P1.
+  A single hand goes to the half it's in, but near the midline it keeps its current player so
+  it doesn't flicker. A player keeps their slot for 1.2 s after their hand vanishes, and
+  duplicate detections are merged.
+- **Handedness** (MediaPipe's label on the raw, un-mirrored frame) is used to mirror left hands
+  before classification and to show the right guide cards and 3D coach. The *Swap left/right
+  detection* checkbox fixes cameras that mirror in the driver. It only affects hints, never
+  who is Player 1.
+- **Missing hands:** after 0.7 s your half shows *"Player N: raise your hand"*. After 3.5 s the
+  match auto-pauses and resumes when both hands are back. Hiding the tab also pauses.
+- **Low confidence:** the ring stays empty and shows *"unsure – hold steady"*. Nothing ever
+  fires below the threshold.
+- **Camera errors** (denied, not found, in use, insecure page, model failure) each get a
   specific message, a retry button and a keyboard-mode fallback.
 
-## Performance
+</details>
 
-Hand tracking is by far the most expensive work. Measured on the dev server (a slow ARM CPU
-with no GPU), MediaPipe took ~90 ms per frame, against ~2.5 ms for drawing a frame of the game.
-So it runs **off the main thread**:
+<details>
+<summary><b>⚡ Performance: why tracking runs in a worker</b></summary>
+<br>
 
-* **Worker tracking.** `handWorker.js` runs MediaPipe in a Web Worker on the CPU backend.
-  * Each new camera frame becomes a downscaled 640×360 `ImageBitmap`, which is handed to the
-    worker without copying.
-  * The worker sends the bitmap back with the landmarks, so the previews draw exactly the frame
-    the skeleton came from.
-  * Only one frame is in flight at a time; the rest are skipped.
-  * Player assignment and the TensorFlow.js classifier stay on the main thread (about 1 ms).
-* **Result:** main-thread tracking cost fell from ~94 ms to ~0.3 ms per frame. Rendering is no
-  longer tied to tracking speed (8 → 31 fps in the headless test, which is capped by software
-  rendering; a normal browser should reach 60 fps). Gesture holds use real time, so slower
-  tracking just means fewer samples per hold.
-* **Fallbacks:** if workers are unavailable, tracking runs on the main thread. `?worker=0`
-  forces that, and `?delegate=GPU` implies it.
-* **Adaptive quality:** if frames stay slower than ~35 fps for a couple of seconds, the canvas
-  glow (`shadowBlur`) is switched off and the game canvas drops from 2× to 1× pixel density.
-* **Measuring on your machine:** the debug overlay (<kbd>`</kbd>) shows rolling `track` /
-  `render` / `frame` timings, plus the worker's detect time and the tracking frame rate.
+Hand tracking is by far the most expensive work. On the dev server (a slow ARM CPU, no GPU),
+MediaPipe took **~90 ms** per frame, against **~2.5 ms** to draw a frame of the game. So it
+runs off the main thread:
 
-## Classifier summary
+- Each camera frame becomes a downscaled 640×360 `ImageBitmap`, which is transferred to
+  `handWorker.js` without copying. The worker sends it back with the landmarks, so previews
+  draw exactly the frame the skeleton came from. Only one frame is in flight at a time.
+- Player assignment and the classifier stay on the main thread (~1 ms).
+- **Result:** main-thread tracking cost dropped from **~94 ms to ~0.3 ms** per frame, and
+  headless rendering went from 8 to 31 fps (capped by software rendering; a normal browser
+  should reach 60). Gesture holds use real time, so slower tracking only means fewer samples
+  per hold.
+- **Adaptive quality:** if frames stay below ~35 fps for a couple of seconds, canvas glow is
+  switched off and the canvas drops from 2× to 1× pixel density.
+- **Measure it yourself:** the debug overlay (<kbd>`</kbd>) shows rolling `track` / `render` /
+  `frame` timings plus the worker's detect time.
 
-Full details are in [training/README.md](training/README.md).
+</details>
 
-* **Data:** 3,864 static-letter samples from three public datasets: ASLNow! landmarks, plus two
-  photo datasets run through MediaPipe, with each photo also flipped to get real left-hand landmarks.
-* **Model:** a 118-feature MLP (128-128-64-24, 41,560 parameters), trained in **TensorFlow/Keras**
-  with categorical cross-entropy after a 16-configuration hyperparameter search. It's saved as a
-  Keras checkpoint and run in the browser with **TensorFlow.js** on the CPU backend.
-* **Accuracy:** 96.4% in 5-fold cross-validation. On a dataset never seen in training it scores
-  86.6% (nested estimate; 88.3% non-nested). The 14 letters used by the game average 0.94 F1 on
-  unseen datasets.
-* **Left hands:** on unseen photos, flipped (left-hand) images score 84.4% vs 87.2% for the
-  originals on one dataset, and slightly *better* (93.2% vs 91.4%) on the other. Training on
-  MediaPipe landmarks of flipped photos closes most of the original left-hand gap.
-* **J and Z** (motion letters) are excluded. A trajectory-based extension is described in the training README.
+---
 
-## Project layout
+## ⌨️ Controls & settings
+
+**Keyboard mode** (on the start screen, or after a camera error) plays the whole game without
+a webcam. The keys below also work as developer shortcuts during webcam play.
+
+| Key | Action |
+|---|---|
+| <kbd>a</kbd>–<kbd>y</kbd> | Confirm that letter for Player 1 |
+| <kbd>Shift</kbd> + letter | Confirm that letter for Player 2 |
+| <kbd>1</kbd>–<kbd>9</kbd> | Spawn an Attack / Slow / Shield / Heal / Freeze / Nova / Haste / Reflect / Leech orb for P1 (<kbd>Shift</kbd> for P2) |
+| <kbd>0</kbd> | Jump one level |
+| <kbd>`</kbd> | Debug overlay: frame rates, top-3 probabilities, handedness, confirmation state |
+| <kbd>Esc</kbd> | Pause / resume |
+| <kbd>Enter</kbd> | Start / rematch / resume |
+
+**URL options**
+
+| Option | Effect |
+|---|---|
+| `?delegate=GPU` | Runs MediaPipe on WebGL. It's first checked against a bundled hand photo, because some WebGL stacks initialise but silently detect nothing. Falls back to CPU if needed. Implies main-thread tracking. |
+| `?worker=0` | Forces main-thread tracking instead of the Web Worker |
+
+**Accessibility**
+
+- 🔊 **Sound** toggle. All audio is synthesised live with Web Audio.
+- 🌙 **Reduced motion** toggle (on by default when the OS asks for it). It turns off screen
+  shake, hand trails, background drift, blinking and most particles.
+- Both settings are remembered between sessions.
+- Letters always have a dark outline and stay readable over effects.
+
+<details>
+<summary><b>🎵 How the musical pops work</b></summary>
+<br>
+
+Inspired by *Tetris Effect*. Destroyed asteroids play notes in **D major** over a slow
+D → Bm → G → A progression that changes every 3.2 s, so both players always harmonise.
+
+- A single pop plays a chord tone that climbs with your combo, so a streak becomes a melody.
+- Popping several targets with one sign plays a strummed chord over a low root. Four or more
+  targets add a ninth on top.
+- A Nova sweep plays a big, wide chord. Sequence steps play soft passing notes.
+- Everything runs through a light echo and is panned to the player's side
+  (`popNote` / `popChord` in `web/src/audio/sfx.js`).
+
+</details>
+
+---
+
+## 🛠️ Development
+
+### Project layout
 
 ```
-web/src/main.js                     app state machine, screens, input, main loop
-web/src/recognition/                handTracker, playerAssign, features, classifier, gestureConfirm
-web/src/game/engine.js              pure simulation (no DOM), fully unit-tested
-web/src/game/effects.js             power-up definitions and balance constants
-web/src/game/boss.js                co-op boss fight logic (phases, attacks, core link, shield nodes)
-web/src/render/                     renderer, particles, background, drawing helpers, handViewer3d (three.js),
-                                    orbFx (orb-break effects), bossView (the boss, its HUD and attacks)
-web/src/recognition/poseCoach.js    finger-by-finger comparison with a reference pose
-web/src/audio/sfx.js                procedural sound effects
-web/public/models/                  asl_tfjs/ (TF.js model), hand_poses.json (3D reference poses), hand_landmarker.task
-web/scripts/convert-model.mjs       scikit-learn weights → TensorFlow.js LayersModel
-web/test/                           node:test suites (+ parity fixtures from training)
+web/                                the game (Vite + vanilla JS + Canvas 2D, runs fully in the browser)
+├── src/main.js                     app state machine, screens, input, main loop
+├── src/recognition/                handTracker, handWorker, playerAssign, features, classifier,
+│                                   gestureConfirm, poseCoach
+├── src/game/engine.js              pure simulation (no DOM), fully unit-tested
+├── src/game/effects.js             power-up definitions and balance constants
+├── src/game/boss.js                co-op boss logic: phases, attacks, core link, shield nodes
+├── src/render/                     renderer, particles, cosmic background, handViewer3d (three.js),
+│                                   orbFx (orb breaks), bossView (boss, HUD and attacks)
+├── src/ui/                         GSAP motion, hands-free menu navigation, tooltips
+├── src/audio/sfx.js                procedural sound effects
+├── server/taunts.js                optional dev/preview endpoint for Gemini boss taunts
+├── public/models/                  asl_tfjs/ (TF.js model), hand_poses.json, hand_landmarker.task
+├── scripts/convert-model.mjs       exported weights → TensorFlow.js LayersModel
+└── test/                           node:test suites (+ parity fixtures from training)
+
+training/                           datasets, landmark extraction, training, evaluation, export
 ```
 
-## Testing that was done
+### Optional: live boss taunts (Gemini)
 
-* `npm test`: 30 unit tests.
-  * Python↔JS feature and probability parity
-  * mirror invariance
-  * hold, repeat-lock, dropout-grace and slow logic
-  * player assignment
-  * targeting, sequences, impacts, shield, combo, every effect, cooldowns, difficulty
-    ramp, identical spawn streams, win condition
-* **Headless Chromium end-to-end run** with a fake webcam stream built from dataset photos
-  (P1's photo flipped to make a left hand):
-  * both hands were tracked and assigned to the correct player
-  * the hands-free "hold B" step advanced setup
-  * Player 2 completed all four practice letters through real recognition
-  * in the match, beams fired and asteroids were destroyed from recognised poses
-* **Keyboard-mode run:** effects, combos, game over and the results screen.
-* **Not yet tested:** play with a real webcam and two real people. Tune `DEFAULT_CONFIRM` in
-  `gestureConfirm.js` (threshold, hold time) after a first session if needed.
+Without configuration (or offline, or in a static build), THE SILENCER uses built-in lines.
+To have Gemini write them live:
+
+```bash
+cp web/.env.local.example web/.env.local
+# then set GEMINI_API_KEY (optional: GEMINI_MODEL, default gemini-3.5-flash-lite)
+```
+
+- The key is read only by the dev/preview server's `POST /api/taunts` endpoint and **never
+  reaches the browser**.
+- A batch of lines is requested during the 3‑2‑1 countdown and refreshed at each phase change.
+  The context sent is game state only: phase, health, the letters each player keeps fumbling
+  and the co-op options. **No camera data is sent.**
+- Lines are validated and sanitised: one sentence, at most 70 characters, PG, and only about
+  the players' play. Live lines carry a small **✦ GEMINI** tag.
+
+### Testing
+
+```bash
+cd web && npm test
+```
+
+**70 unit tests** across 7 suites, covering:
+
+- Python ↔ JavaScript parity for features and probabilities, and mirror invariance
+- gesture hold, repeat-lock, dropout grace and slow logic, and player assignment
+- the engine: targeting, sequences, impacts, shields, combos, every effect, cooldowns, the
+  difficulty ramp, identical spawn streams and the win condition
+- the boss fight, the pose coach, the 3D hand viewer and taunt sanitisation
+
+In addition, a **headless Chromium end-to-end run** used a fake webcam stream built from
+dataset photos. Both hands were tracked and assigned to the right player, the hands-free
+"hold B" step advanced setup, all four practice letters were completed through real
+recognition, and beams destroyed asteroids in the match. A keyboard-mode run covered effects,
+combos, game over and results.
+
+> **Not yet tested:** play with a real webcam and two real people. After a first session,
+> tune `DEFAULT_CONFIRM` (threshold, hold time) in `web/src/recognition/gestureConfirm.js` if
+> needed.
+
+### Retraining the classifier
+
+See [`training/README.md`](training/README.md). It covers downloading the datasets,
+extracting landmarks, the hyperparameter search, the Keras checkpoint, and exporting to the
+TF.js model, reference poses and parity fixtures the game uses.
