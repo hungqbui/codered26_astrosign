@@ -29,7 +29,7 @@ export class GestureNav {
     c.style.width = c.style.height = `${size}px`;
     const g = c.getContext('2d');
     g.scale(dpr, dpr);
-    drawTemplate(g, this.templates[letter], size / 2, size / 2, size * 0.78, color, 'right');
+    drawTemplate(g, this.templates[letter], size / 2, size / 2, size * 0.88, color, 'right');
     return c;
   }
 
@@ -37,7 +37,7 @@ export class GestureNav {
     const el = document.createElement('span');
     el.className = 'gbadge';
     el.setAttribute('aria-hidden', 'true');
-    el.append(this.poseCanvas(item.letter, 26, '#ffffff'));
+    el.append(this.poseCanvas(item.letter, 32, '#ffffff'));
     el.insertAdjacentHTML('beforeend', `<b>${item.letter}</b>${item.both ? '<em>×2</em>' : ''}
       <svg class="gring" viewBox="0 0 36 36"><circle cx="18" cy="18" r="16" /></svg>`);
     return el;
@@ -114,7 +114,7 @@ export class GestureNav {
       const cell = document.createElement('div');
       cell.className = 'nl-item';
       cell.dataset.letter = it.letter;
-      cell.append(this.poseCanvas(it.letter, 34, '#e9e6ff'));
+      cell.append(this.poseCanvas(it.letter, 42, '#e9e6ff'));
       cell.insertAdjacentHTML('beforeend', `<b>${it.letter}</b><span>${it.label}${it.both ? ' <em>both players</em>' : ''}</span>`);
       L.append(cell);
       it.legendEl = cell;

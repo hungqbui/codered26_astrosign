@@ -241,13 +241,13 @@ export function drawIcon(ctx, kind, x, y, s, color, t = 0) {
 }
 
 /** Glowing skeleton for a hand given in canvas pixel coordinates. */
-export function drawSkeleton(ctx, pts, color, { width = 3, alpha = 1, joints = true } = {}) {
+export function drawSkeleton(ctx, pts, color, { width = 3, alpha = 1, joints = true, glow = true } = {}) {
   ctx.save();
   ctx.globalAlpha = alpha;
   ctx.lineCap = 'round';
   ctx.strokeStyle = color;
   ctx.shadowColor = color;
-  ctx.shadowBlur = width * 3;
+  ctx.shadowBlur = glow ? width * 3 : 0;
   ctx.lineWidth = width;
   ctx.beginPath();
   for (const [a, b] of HAND_CONNECTIONS) {
@@ -293,12 +293,14 @@ export function drawTemplate(ctx, template, cx, cy, size, color, hand = 'right')
   ctx.closePath();
   ctx.fill();
   ctx.restore();
-  drawSkeleton(ctx, pts, color, { width: Math.max(2.5, size * 0.045) });
+  // Small icons (menu badges, legend) get thin strokes and no glow, or the fingers merge into a blob.
+  const small = size < 60;
+  drawSkeleton(ctx, pts, color, { width: small ? Math.max(1.2, size * 0.05) : Math.max(2.5, size * 0.045), glow: !small });
   // Thumb tip highlighted: the most common source of confusion.
   ctx.save();
   ctx.fillStyle = '#ffd23f';
   ctx.beginPath();
-  ctx.arc(pts[4][0], pts[4][1], Math.max(3, size * 0.05), 0, Math.PI * 2);
+  ctx.arc(pts[4][0], pts[4][1], small ? Math.max(1.6, size * 0.06) : Math.max(3, size * 0.05), 0, Math.PI * 2);
   ctx.fill();
   ctx.restore();
 }
