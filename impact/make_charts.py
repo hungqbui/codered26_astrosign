@@ -1,8 +1,7 @@
 """Render the impact charts in impact/charts/ from the CSVs in impact/data/.
 
-Every chart is written four times: SVG + PNG, each in a light and a dark variant
-(`<name>.svg`, `<name>-dark.svg`, ...). impact/README.md picks the right one with
-<picture> so the charts follow GitHub's theme.
+Every chart is written twice, as `<name>.svg` and `<name>.png` (2x, for slides), on a white
+background.
 
     python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
     .venv/bin/python make_charts.py
@@ -24,18 +23,11 @@ OUT = HERE / "charts"
 
 # Validated palette (dataviz reference instance). Deaf = slot 1 (blue), hearing = slot 2 (orange),
 # kept identical across every chart so the entity always wears the same colour.
-THEMES = {
-    "light": dict(
-        surface="#fcfcfb", ink="#0b0b0b", ink2="#52514e", muted="#898781",
-        grid="#e1e0d9", axis="#c3c2b7", deaf="#2a78d6", hearing="#eb6834",
-        context="#b9b7af", wash_deaf="#2a78d6", seq_light="#86b6ef", seq_dark="#256abf",
-    ),
-    "dark": dict(
-        surface="#1a1a19", ink="#f0efec", ink2="#c3c2b7", muted="#898781",
-        grid="#2c2c2a", axis="#383835", deaf="#3987e5", hearing="#d95926",
-        context="#5f5e59", wash_deaf="#3987e5", seq_light="#184f95", seq_dark="#5598e7",
-    ),
-}
+THEME = dict(
+    surface="#ffffff", ink="#0b0b0b", ink2="#52514e", muted="#898781",
+    grid="#e1e0d9", axis="#c3c2b7", deaf="#2a78d6", hearing="#eb6834",
+    context="#b9b7af", wash_deaf="#2a78d6", seq_light="#86b6ef", seq_dark="#256abf",
+)
 
 FONT = ["Helvetica Neue", "Helvetica", "Arial", "DejaVu Sans", "sans-serif"]
 W = 8.0  # inches; 800 px at 100 dpi
@@ -137,10 +129,9 @@ def legend(fig, t, items, y_in, _h=None, x_in=0.28):
         x += 0.078 * len(label) + 0.32
 
 
-def save(fig, name, theme):
-    suffix = "" if theme == "light" else "-dark"
+def save(fig, name):
     for ext in ("svg", "png"):
-        fig.savefig(OUT / f"{name}{suffix}.{ext}", facecolor=fig.get_facecolor(), dpi=200 if ext == "png" else 100)
+        fig.savefig(OUT / f"{name}.{ext}", facecolor=fig.get_facecolor(), dpi=200 if ext == "png" else 100)
     plt.close(fig)
 
 
@@ -424,10 +415,9 @@ CHARTS = {
 def main():
     OUT.mkdir(exist_ok=True)
     plt.rcParams.update({"font.family": FONT, "svg.fonttype": "none", "svg.hashsalt": "celestisign"})
-    for theme, t in THEMES.items():
-        for name, draw in CHARTS.items():
-            save(draw(t), name, theme)
-    print(f"wrote {len(CHARTS) * 4} files to {OUT.relative_to(HERE.parent)}/")
+    for name, draw in CHARTS.items():
+        save(draw(THEME), name)
+    print(f"wrote {len(CHARTS) * 2} files to {OUT.relative_to(HERE.parent)}/")
 
 
 if __name__ == "__main__":

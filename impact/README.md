@@ -5,8 +5,7 @@ good way to start closing it. Every number comes from a primary source (WHO, NIH
 Deaf Center, the Modern Language Association, a peer-reviewed meta-analysis), which is cited
 under each chart and listed with caveats at the end.
 
-The charts switch between light and dark versions to match your GitHub theme. PNG copies
-(2× resolution) for slides sit next to the SVGs in [`charts/`](charts/).
+Each chart is in [`charts/`](charts/) as an SVG, with a 2×-resolution PNG copy for slides.
 
 **Contents**
 
@@ -25,10 +24,7 @@ The charts switch between light and dark versions to match your GitHub theme. PN
 
 ### 1. Hearing loss is growing
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="charts/01-hearing-loss-projection-dark.svg">
-  <img alt="Column chart: people with hearing loss worldwide rise from 1.58 billion in 2019 to a projected 2.50 billion in 2050; disabling hearing loss rises from 430 million to 711 million." src="charts/01-hearing-loss-projection.svg">
-</picture>
+<img alt="Column chart: people with hearing loss worldwide rise from 1.58 billion in 2019 to a projected 2.50 billion in 2050; disabling hearing loss rises from 430 million to 711 million." src="charts/01-hearing-loss-projection.svg">
 
 By 2050, about **1 in 4 people** will have some hearing loss. The number who need care for
 **disabling** hearing loss rises by 65%, from 430 million to 711 million.
@@ -47,10 +43,7 @@ By 2050, about **1 in 4 people** will have some hearing loss. The number who nee
 
 ### 2. Where people need care
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="charts/02-hearing-loss-by-region-dark.svg">
-  <img alt="Bar chart of disabling hearing loss by WHO region: Western Pacific 136.5M, South-East Asia 109.4M, Americas 62.8M, Europe 57.3M, Africa 39.7M, Eastern Mediterranean 22.1M." src="charts/02-hearing-loss-by-region.svg">
-</picture>
+<img alt="Bar chart of disabling hearing loss by WHO region: Western Pacific 136.5M, South-East Asia 109.4M, Americas 62.8M, Europe 57.3M, Africa 39.7M, Eastern Mediterranean 22.1M." src="charts/02-hearing-loss-by-region.svg">
 
 Disabling hearing loss exists in every region. The Western Pacific and South-East Asia regions
 together account for 57% of the total, and nearly 80% of affected people live in low- and
@@ -72,10 +65,7 @@ middle-income countries.
 
 ### 3. The gap starts at home
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="charts/03-deaf-children-hearing-parents-dark.svg">
-  <img alt="Waffle chart of 100 squares: 90 orange squares are deaf children born to hearing parents, 10 blue squares have at least one deaf parent." src="charts/03-deaf-children-hearing-parents.svg">
-</picture>
+<img alt="Waffle chart of 100 squares: 90 orange squares are deaf children born to hearing parents, 10 blue squares have at least one deaf parent." src="charts/03-deaf-children-hearing-parents.svg">
 
 **More than 9 in 10 deaf children** are born to hearing parents, and most of those parents
 have no prior knowledge of a sign language. This is the gap CelestiSign is designed for: a
@@ -83,10 +73,7 @@ hearing family member can learn to fingerspell at home, for free, with a webcam.
 
 ### 4. Help is scarce where it's needed most
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="charts/04-specialist-shortage-dark.svg">
-  <img alt="Bar chart: share of low-income countries with fewer than one specialist per million people. Audiologist 93%, speech therapist 83%, ENT specialist 78%, teacher of the deaf 50%." src="charts/04-specialist-shortage.svg">
-</picture>
+<img alt="Bar chart: share of low-income countries with fewer than one specialist per million people. Audiologist 93%, speech therapist 83%, ENT specialist 78%, teacher of the deaf 50%." src="charts/04-specialist-shortage.svg">
 
 In **93% of low-income countries** there is less than one audiologist per million people.
 Globally, only **17%** of people who could benefit from a hearing aid actually use one. When
@@ -112,10 +99,7 @@ measures the same thing. [`data/specialist_shortage_low_income.csv`](data/specia
 
 ### 5. The employment gap
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="charts/05-employment-gap-dark.svg">
-  <img alt="Line chart from 2008 to 2017: employment of hearing adults moves from 76.6% to 75.8%, deaf adults from 55.9% to 53.3%. The gap widens from 20.7 to 22.5 points." src="charts/05-employment-gap.svg">
-</picture>
+<img alt="Line chart from 2008 to 2017: employment of hearing adults moves from 76.6% to 75.8%, deaf adults from 55.9% to 53.3%. The gap widens from 20.7 to 22.5 points." src="charts/05-employment-gap.svg">
 
 Over ten years the gap **widened**, from 20.7 to 22.5 percentage points. The National Deaf
 Center's latest figures (2024 data) show deaf employment at a record 57.7%, but the gap is still
@@ -142,10 +126,7 @@ more than 15 points. Deaf people who work full time earn about the same as heari
 
 ### 6. From school to work
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="charts/06-school-to-work-gap-dark.svg">
-  <img alt="Dumbbell chart, deaf vs hearing: completed high school 84% vs 89%; in the labor force 57.1% vs 79.2%; employed 53.3% vs 75.8%; bachelor's degree or higher 19% vs 34%." src="charts/06-school-to-work-gap.svg">
-</picture>
+<img alt="Dumbbell chart, deaf vs hearing: completed high school 84% vs 89%; in the labor force 57.1% vs 79.2%; employed 53.3% vs 75.8%; bachelor's degree or higher 19% vs 34%." src="charts/06-school-to-work-gap.svg">
 
 The gap is small at high school (5 points) and widens at each later step: 15 points for a
 bachelor's degree and 22 points for being in work.
@@ -169,10 +150,7 @@ bachelor's degree and 22 points for being in work.
 
 ### 7. People want to learn ASL
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="charts/07-asl-enrollment-dark.svg">
-  <img alt="Line chart of US college language enrollments, 1990 to 2021. ASL rises from 1,602 to 107,899, overtaking German by 2013 and Japanese by 2002, while French and German decline." src="charts/07-asl-enrollment.svg">
-</picture>
+<img alt="Line chart of US college language enrollments, 1990 to 2021. ASL rises from 1,602 to 107,899, overtaking German by 2013 and Japanese by 2002, while French and German decline." src="charts/07-asl-enrollment.svg">
 
 ASL enrollments at US colleges grew **67-fold** in 30 years. Between 2016 and 2021, total
 language enrollment fell by 16.6%, the steepest drop on record, and ASL was one of only three
@@ -197,10 +175,7 @@ reach people who never sign up for a class.
 
 ### 8. Games help people learn
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="charts/08-gamification-evidence-dark.svg">
-  <img alt="Forest plot of gamification effects (Hedges' g with 95% confidence intervals). Cognitive: 0.49 all studies, 0.42 high rigor. Motivational: 0.36 all, 0.22 high rigor (not significant). Behavioral: 0.25 all, 0.27 high rigor (not significant)." src="charts/08-gamification-evidence.svg">
-</picture>
+<img alt="Forest plot of gamification effects (Hedges' g with 95% confidence intervals). Cognitive: 0.49 all studies, 0.42 high rigor. Motivational: 0.36 all, 0.22 high rigor (not significant). Behavioral: 0.25 all, 0.27 high rigor (not significant)." src="charts/08-gamification-evidence.svg">
 
 Across controlled studies, gamified lessons produced better **learning** (g = 0.49), more
 **motivation** (g = 0.36) and more **engagement** (g = 0.25) than the same lessons without game
@@ -268,7 +243,7 @@ the game.
 ```bash
 cd impact
 python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
-.venv/bin/python make_charts.py      # writes 32 files to charts/ (8 charts × light/dark × SVG/PNG)
+.venv/bin/python make_charts.py      # writes 16 files to charts/ (8 charts × SVG/PNG)
 ```
 
 The colours are a palette checked for colour-blind safety, and are consistent across charts:
