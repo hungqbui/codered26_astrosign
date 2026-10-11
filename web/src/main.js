@@ -10,7 +10,7 @@ import {
   CameraError, createLandmarker, HandTracker, loadHandModel, openCamera, WorkerHandTracker,
 } from './recognition/handTracker.js';
 import { compareToPose } from './recognition/poseCoach.js';
-import { drawIcon, drawSkeleton, outlinedText } from './render/draw.js';
+import { COLORS, drawIcon, drawSkeleton, outlinedText } from './render/draw.js';
 import { Renderer } from './render/renderer.js';
 import {
   ambient, countdownPop, initLogo, magnetic, resultsIn, screenIn, setReducedMotion, switchMode, tiltCards, toastIn,
@@ -151,6 +151,7 @@ function buildPowerupLegend() {
     const div = document.createElement('div');
     div.className = 'pu';
     div.dataset.effect = k;
+    div.style.setProperty('--c', d.color);
     div.tabIndex = 0; // focusable, so the description tooltip also works from the keyboard
     const c = document.createElement('canvas');
     c.width = c.height = 96;
@@ -468,14 +469,8 @@ function finish() {
   const w = g.winner;
   const el = $('winner');
   if (g.mode === 'boss') return finishBoss(g, el);
-  if (w === 'draw') {
-    el.textContent = 'DRAW!';
-    el.style.color = '#fff';
-  } else {
-    el.textContent = `${PLAYER_NAMES[w].toUpperCase()} WINS!`;
-    el.style.color = PLAYER_COLORS[w];
-    el.style.textShadow = `0 0 24px ${PLAYER_COLORS[w]}`;
-  }
+  el.textContent = w === 'draw' ? 'DRAW!' : `${PLAYER_NAMES[w].toUpperCase()} WINS!`;
+  el.style.setProperty('--wc', w === 'draw' ? '#c79bff' : PLAYER_COLORS[w]);
   for (const side of [0, 1]) {
     const p = g.players[side];
     const attempts = p.hits + p.misses;
@@ -500,8 +495,7 @@ function finish() {
 function finishBoss(g, el) {
   const won = g.winner === 'team';
   el.textContent = won ? 'VICTORY!' : 'DEFEATED';
-  el.style.color = won ? '#ffd23f' : '#ff4a5a';
-  el.style.textShadow = `0 0 24px ${won ? '#ffd23f' : '#ff4a5a'}`;
+  el.style.setProperty('--wc', won ? COLORS.accent : COLORS.danger);
   const dmg = g.boss.damageBy;
   const mvp = dmg[0] === dmg[1] ? -1 : dmg[0] > dmg[1] ? 0 : 1;
   const mm = Math.floor(g.t / 60);
@@ -826,6 +820,7 @@ function tickCountdown(dt) {
     c.shown = i;
     const el = $('count');
     el.textContent = steps[i];
+    el.classList.toggle('go', i === steps.length - 1);
     countdownPop(el);
     sfx.countdown(i === steps.length - 1);
   }
