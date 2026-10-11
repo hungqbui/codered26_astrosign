@@ -1,4 +1,4 @@
-// GSAP-driven UI motion (the logo's entrance and shimmer are CSS): screen entrances, magnetic buttons, card tilt, countdown,
+// GSAP-driven UI motion (the logo's entrance and shimmer are CSS): screen entrances, magnetic buttons, countdown,
 // results count-up. Everything collapses to instant state changes in reduced-motion mode.
 import { gsap } from 'gsap';
 
@@ -9,7 +9,7 @@ export function setReducedMotion(r) {
   gsap.globalTimeline.getChildren(true, true, false).forEach((t) => { if (t.vars?.repeat === -1) t.paused(r); });
 }
 
-const STAGGER_SEL = '.tagline, .mode-pick, .row > .btn, .row > button, .pu, h2, .status, .pcard, .tips, .setup-view, .stat-col, .winner, .hint, details';
+const STAGGER_SEL = '.tagline, .mode-pick, .row > .btn, .row > button, h2, .status, .pcard, .tips, .setup-view, .stat-col, .winner, .hint, details';
 
 /** Animate a screen's panel and its contents in. */
 export function screenIn(screen) {
@@ -70,20 +70,6 @@ export function switchMode(mode, instant = false) {
   gsap.to(hide, { autoAlpha: 0, y: -10, duration: 0.22, ease: 'power2.in', overwrite: true });
   gsap.fromTo(show, { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.4, delay: 0.15, ease: 'power3.out', overwrite: true });
   gsap.fromTo(show.children, { y: 10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, delay: 0.18, stagger: 0.06, ease: 'power2.out', clearProps: 'transform,opacity' });
-}
-
-/** Power-up cards tilt in 3-D under the pointer. */
-export function tiltCards(root) {
-  root.querySelectorAll('.pu').forEach((c) => {
-    c.addEventListener('pointermove', (e) => {
-      if (reduced) return;
-      const r = c.getBoundingClientRect();
-      const px = (e.clientX - r.left) / r.width - 0.5;
-      const py = (e.clientY - r.top) / r.height - 0.5;
-      gsap.to(c, { rotateY: px * 16, rotateX: -py * 16, scale: 1.04, duration: 0.3, transformPerspective: 500 });
-    });
-    c.addEventListener('pointerleave', () => gsap.to(c, { rotateY: 0, rotateX: 0, scale: 1, duration: 0.6, ease: 'elastic.out(1, 0.5)' }));
-  });
 }
 
 export function countdownPop(el) {

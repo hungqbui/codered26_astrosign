@@ -1,5 +1,5 @@
 import { Sfx } from './audio/sfx.js';
-import { EFFECTS, EFFECT_KEYS } from './game/effects.js';
+import { EFFECT_KEYS } from './game/effects.js';
 import {
   applyLetter, confirmSpeed, createGame, drainEvents, spawnBubble, spawnRock, update,
 } from './game/engine.js';
@@ -10,10 +10,10 @@ import {
   CameraError, createLandmarker, HandTracker, loadHandModel, openCamera, WorkerHandTracker,
 } from './recognition/handTracker.js';
 import { compareToPose } from './recognition/poseCoach.js';
-import { COLORS, drawIcon, drawSkeleton, outlinedText } from './render/draw.js';
+import { COLORS, drawSkeleton, outlinedText } from './render/draw.js';
 import { Renderer } from './render/renderer.js';
 import {
-  ambient, countdownPop, magnetic, resultsIn, screenIn, setReducedMotion, switchMode, tiltCards, toastIn,
+  ambient, countdownPop, magnetic, resultsIn, screenIn, setReducedMotion, switchMode, toastIn,
 } from './ui/anim.js';
 import { GestureNav } from './ui/gestureNav.js';
 import { initTooltips } from './ui/tooltip.js';
@@ -129,57 +129,16 @@ async function boot() {
   renderer.setReduced(settings.reduced);
   app.confirmers = [0, 1].map(() => new GestureConfirmer(model.classes));
   window.addEventListener('resize', () => renderer.resize());
-  buildPowerupLegend();
   initTooltips();
   taunts = new TauntDirector({ say: (text, live) => renderer.boss.say(text, live) });
   nav = new GestureNav({ templates: app.templates, legend: $('nav-legend') });
   setReducedMotion(settings.reduced);
   magnetic();
-  tiltCards($('powerups'));
   ambient();
   syncToggles();
   setState('start');
   autoStartCamera(); // hand tracking from the first screen
   requestAnimationFrame(frame);
-}
-
-function buildPowerupLegend() {
-  const root = $('powerups');
-  for (const k of EFFECT_KEYS) {
-    const d = EFFECTS[k];
-    const div = document.createElement('div');
-    div.className = 'pu';
-    div.dataset.effect = k;
-    div.style.setProperty('--c', d.color);
-    div.tabIndex = 0; // focusable, so the description tooltip also works from the keyboard
-    const c = document.createElement('canvas');
-    c.width = c.height = 96;
-    const g = c.getContext('2d');
-    g.shadowColor = d.color;
-    g.shadowBlur = 12;
-    g.strokeStyle = d.color;
-    g.lineWidth = 4;
-    g.beginPath();
-    g.arc(48, 48, 40, 0, Math.PI * 2);
-    g.stroke();
-    drawIcon(g, d.icon, 48, 48, 44, d.color);
-    div.append(c);
-    div.insertAdjacentHTML('beforeend', `<b style="color:${d.color}">${d.name}</b>`);
-    root.append(div);
-  }
-  updatePowerupTips();
-}
-
-/** Orb descriptions (shown on hover) follow the selected mode and the shared-orbs option. */
-const SHAREABLE = ['shield', 'freeze', 'haste', 'reflect', 'nova'];
-function updatePowerupTips() {
-  const coop = settings.mode === 'boss';
-  document.querySelectorAll('.pu').forEach((el) => {
-    const d = EFFECTS[el.dataset.effect];
-    let text = coop ? d.coopBlurb : d.blurb;
-    if (coop && settings.shareOrbs && SHAREABLE.includes(el.dataset.effect)) text += ' (both players)';
-    el.dataset.tip = `${d.name}\n${text}`;
-  });
 }
 
 // ---------------- camera ----------------
@@ -653,11 +612,10 @@ function startTutorialOrGame() {
 function syncMode(animate = false) {
   document.querySelectorAll('.mode-btn').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.mode === settings.mode)));
   switchMode(settings.mode, !animate);
-  updatePowerupTips();
   $('opt-share-orbs').checked = settings.shareOrbs;
   $('opt-share-targets').checked = settings.shareTargets;
 }
-$('opt-share-orbs').onchange = (e) => { settings.shareOrbs = e.target.checked; saveSettings(); updatePowerupTips(); };
+$('opt-share-orbs').onchange = (e) => { settings.shareOrbs = e.target.checked; saveSettings(); };
 $('opt-share-targets').onchange = (e) => { settings.shareTargets = e.target.checked; saveSettings(); };
 document.querySelectorAll('.mode-btn').forEach((b) => {
   b.onclick = () => { setMode(b.dataset.mode); sfx.unlock(); sfx.click(); };
