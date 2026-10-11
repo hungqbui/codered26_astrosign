@@ -65,7 +65,7 @@ export const HAND_CONNECTIONS = [
   [0, 17],
 ];
 
-export const PLAYER_COLORS = ['#38e1ff', '#ff4fd8'];
+export const PLAYER_COLORS = ['#4ce6ff', '#ff5fd2']; // = COLORS.p1 / .p2 in render/draw.js and --p1 / --p2 in style.css
 export const PLAYER_NAMES = ['Player 1', 'Player 2'];
 // Players are assigned by where they stand (screen side); either hand can play.
 export const PLAYER_SIDES = ['left side', 'right side'];

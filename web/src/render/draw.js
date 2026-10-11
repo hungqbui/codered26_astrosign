@@ -3,6 +3,11 @@ import { HAND_CONNECTIONS } from '../game/letters.js';
 
 export const FONT = 'Orbitron, system-ui, sans-serif';
 export const UI_FONT = 'Inter, system-ui, sans-serif';
+// Canvas mirror of the CSS tokens in style.css (:root). Keep the two in sync.
+export const COLORS = {
+  p1: '#4ce6ff', p2: '#ff5fd2', ok: '#5dffa8', accent: '#ffcf5a', danger: '#ff4a5a',
+  text: '#f6f3ff', muted: '#a8a3c9', gold: '#ffd27a', hit: '#ff5f9c',
+};
 
 export function hexA(hex, a) {
   const n = parseInt(hex.slice(1), 16);
