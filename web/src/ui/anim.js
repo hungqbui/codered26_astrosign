@@ -1,11 +1,11 @@
-// GSAP-driven UI motion (the logo's entrance and shimmer are CSS): screen entrances, magnetic buttons, countdown,
+// GSAP-driven UI motion (the logo's entrance is CSS): screen entrances, magnetic buttons, countdown,
 // results count-up. Everything collapses to instant state changes in reduced-motion mode.
 import { gsap } from 'gsap';
 
 let reduced = false;
 export function setReducedMotion(r) {
   reduced = r;
-  document.body.classList.toggle('reduced-motion', r); // gates the CSS animations (logo shimmer, orbs)
+  document.body.classList.toggle('reduced-motion', r); // gates the CSS animations (logo entrance)
   gsap.globalTimeline.getChildren(true, true, false).forEach((t) => { if (t.vars?.repeat === -1) t.paused(r); });
 }
 
