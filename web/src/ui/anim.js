@@ -1,14 +1,15 @@
-// GSAP-driven UI motion: screen entrances, the logo, magnetic buttons, card tilt, countdown,
+// GSAP-driven UI motion (the logo's entrance and shimmer are CSS): screen entrances, magnetic buttons, card tilt, countdown,
 // results count-up. Everything collapses to instant state changes in reduced-motion mode.
 import { gsap } from 'gsap';
 
 let reduced = false;
 export function setReducedMotion(r) {
   reduced = r;
+  document.body.classList.toggle('reduced-motion', r); // gates the CSS animations (logo shimmer, orbs)
   gsap.globalTimeline.getChildren(true, true, false).forEach((t) => { if (t.vars?.repeat === -1) t.paused(r); });
 }
 
-const STAGGER_SEL = '.logo-char, .tagline, .lead, .mode-pick, .row > .btn, .row > button, .pu, h2, .status, .pcard, .tips, .setup-view, .stat-col, .winner, .hint, details';
+const STAGGER_SEL = '.tagline, .mode-pick, .row > .btn, .row > button, .pu, h2, .status, .pcard, .tips, .setup-view, .stat-col, .winner, .hint, details';
 
 /** Animate a screen's panel and its contents in. */
 export function screenIn(screen) {
@@ -20,35 +21,6 @@ export function screenIn(screen) {
   const tl = gsap.timeline();
   tl.fromTo(panel, { opacity: 0, y: 24, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: 'power3.out', clearProps: 'transform,opacity' });
   tl.fromTo(parts, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.38, stagger: 0.03, ease: 'power2.out', clearProps: 'transform,opacity' }, '-=0.25');
-}
-
-/** Split the logo into letters, drop them in, then keep them gently floating. */
-export function initLogo(logo) {
-  const parts = [];
-  for (const node of [...logo.childNodes]) {
-    const text = node.textContent;
-    const wrap = node.nodeType === 3 ? document.createDocumentFragment() : node;
-    if (node.nodeType !== 3) node.textContent = '';
-    for (const ch of text) {
-      const s = document.createElement('span');
-      s.className = 'logo-char';
-      s.textContent = ch;
-      wrap.append(s);
-      parts.push(s);
-    }
-    if (node.nodeType === 3) node.replaceWith(wrap);
-  }
-  if (reduced) return;
-  gsap.fromTo(parts, { y: -70, opacity: 0, rotateX: 90 }, { y: 0, opacity: 1, rotateX: 0, duration: 0.8, stagger: 0.05, ease: 'back.out(2.2)' });
-  gsap.to(parts, { y: -6, duration: 1.4, ease: 'sine.inOut', repeat: -1, yoyo: true, stagger: { each: 0.12, repeat: -1, yoyo: true }, delay: 1 });
-  logo.addEventListener('pointermove', (e) => { // letters lean away from the pointer
-    parts.forEach((p) => {
-      const r = p.getBoundingClientRect();
-      const dx = (r.left + r.width / 2 - e.clientX) / 120;
-      gsap.to(p, { rotateZ: Math.max(-12, Math.min(12, dx * 6)), duration: 0.4, overwrite: 'auto' });
-    });
-  });
-  logo.addEventListener('pointerleave', () => gsap.to(parts, { rotateZ: 0, duration: 0.8, ease: 'elastic.out(1, 0.4)' }));
 }
 
 /**

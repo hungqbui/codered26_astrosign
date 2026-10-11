@@ -13,7 +13,7 @@ import { compareToPose } from './recognition/poseCoach.js';
 import { COLORS, drawIcon, drawSkeleton, outlinedText } from './render/draw.js';
 import { Renderer } from './render/renderer.js';
 import {
-  ambient, countdownPop, initLogo, magnetic, resultsIn, screenIn, setReducedMotion, switchMode, tiltCards, toastIn,
+  ambient, countdownPop, magnetic, resultsIn, screenIn, setReducedMotion, switchMode, tiltCards, toastIn,
 } from './ui/anim.js';
 import { GestureNav } from './ui/gestureNav.js';
 import { initTooltips } from './ui/tooltip.js';
@@ -134,7 +134,6 @@ async function boot() {
   taunts = new TauntDirector({ say: (text, live) => renderer.boss.say(text, live) });
   nav = new GestureNav({ templates: app.templates, legend: $('nav-legend') });
   setReducedMotion(settings.reduced);
-  initLogo(document.querySelector('.logo'));
   magnetic();
   tiltCards($('powerups'));
   ambient();
