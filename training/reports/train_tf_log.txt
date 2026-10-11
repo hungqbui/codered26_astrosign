@@ -1,0 +1,29 @@
+3864 samples, sources [np.str_('asl_letters'), np.str_('aslnow'), np.str_('marxulia')], 16 configs
+[ 1/16] {'hidden': (128, 128, 64), 'dropout': 0.25, 'l2': 0.0001, 'lr': 0.003, 'batch': 128, 'label_smoothing': 0.1} -> asl_letters:0.850 aslnow:0.827 marxulia:0.913  mean 0.863 (61s)
+WARNING:tensorflow:5 out of the last 9 calls to <function TensorFlowTrainer.make_predict_function.<locals>.one_step_on_data_distributed at 0xffff2fd919e0> triggered tf.function retracing. Tracing is expensive and the excessive number of tracings could be due to (1) creating @tf.function repeatedly in a loop, (2) passing tensors with different shapes, (3) passing Python objects instead of tensors. For (1), please define your @tf.function outside of the loop. For (2), @tf.function has reduce_retracing=True option that can avoid unnecessary retracing. For (3), please refer to https://www.tensorflow.org/guide/function#controlling_retracing and https://www.tensorflow.org/api_docs/python/tf/function for  more details.
+WARNING:tensorflow:6 out of the last 11 calls to <function TensorFlowTrainer.make_predict_function.<locals>.one_step_on_data_distributed at 0xffff2c3d5800> triggered tf.function retracing. Tracing is expensive and the excessive number of tracings could be due to (1) creating @tf.function repeatedly in a loop, (2) passing tensors with different shapes, (3) passing Python objects instead of tensors. For (1), please define your @tf.function outside of the loop. For (2), @tf.function has reduce_retracing=True option that can avoid unnecessary retracing. For (3), please refer to https://www.tensorflow.org/guide/function#controlling_retracing and https://www.tensorflow.org/api_docs/python/tf/function for  more details.
+[ 2/16] {'hidden': (128, 128, 64), 'dropout': 0.0, 'l2': 0.0, 'lr': 0.0003, 'batch': 64, 'label_smoothing': 0.1} -> asl_letters:0.858 aslnow:0.869 marxulia:0.923  mean 0.883 (93s)
+[ 3/16] {'hidden': (128, 128, 64), 'dropout': 0.0, 'l2': 1e-05, 'lr': 0.003, 'batch': 64, 'label_smoothing': 0.1} -> asl_letters:0.848 aslnow:0.850 marxulia:0.906  mean 0.868 (70s)
+[ 4/16] {'hidden': (64,), 'dropout': 0.1, 'l2': 0.001, 'lr': 0.0003, 'batch': 128, 'label_smoothing': 0.0} -> asl_letters:0.844 aslnow:0.840 marxulia:0.923  mean 0.869 (105s)
+[ 5/16] {'hidden': (256, 128), 'dropout': 0.1, 'l2': 0.001, 'lr': 0.001, 'batch': 128, 'label_smoothing': 0.05} -> asl_letters:0.852 aslnow:0.848 marxulia:0.926  mean 0.875 (113s)
+[ 6/16] {'hidden': (128, 64), 'dropout': 0.25, 'l2': 0.0001, 'lr': 0.003, 'batch': 256, 'label_smoothing': 0.1} -> asl_letters:0.837 aslnow:0.856 marxulia:0.920  mean 0.871 (46s)
+[ 7/16] {'hidden': (256, 128), 'dropout': 0.25, 'l2': 1e-05, 'lr': 0.003, 'batch': 128, 'label_smoothing': 0.0} -> asl_letters:0.847 aslnow:0.843 marxulia:0.913  mean 0.868 (29s)
+[ 8/16] {'hidden': (128, 128, 64), 'dropout': 0.0, 'l2': 0.001, 'lr': 0.001, 'batch': 64, 'label_smoothing': 0.0} -> asl_letters:0.828 aslnow:0.865 marxulia:0.915  mean 0.869 (73s)
+[ 9/16] {'hidden': (64, 32), 'dropout': 0.0, 'l2': 0.0, 'lr': 0.001, 'batch': 256, 'label_smoothing': 0.05} -> asl_letters:0.828 aslnow:0.869 marxulia:0.907  mean 0.868 (68s)
+[10/16] {'hidden': (256, 128), 'dropout': 0.4, 'l2': 0.001, 'lr': 0.001, 'batch': 128, 'label_smoothing': 0.05} -> asl_letters:0.843 aslnow:0.855 marxulia:0.919  mean 0.872 (114s)
+[11/16] {'hidden': (128,), 'dropout': 0.1, 'l2': 1e-05, 'lr': 0.0003, 'batch': 256, 'label_smoothing': 0.0} -> asl_letters:0.846 aslnow:0.838 marxulia:0.918  mean 0.867 (72s)
+[12/16] {'hidden': (64,), 'dropout': 0.0, 'l2': 0.001, 'lr': 0.003, 'batch': 256, 'label_smoothing': 0.0} -> asl_letters:0.815 aslnow:0.843 marxulia:0.913  mean 0.857 (37s)
+[13/16] {'hidden': (256, 128), 'dropout': 0.1, 'l2': 1e-05, 'lr': 0.0003, 'batch': 128, 'label_smoothing': 0.1} -> asl_letters:0.845 aslnow:0.864 marxulia:0.911  mean 0.873 (149s)
+[14/16] {'hidden': (128, 64), 'dropout': 0.0, 'l2': 0.0001, 'lr': 0.0003, 'batch': 256, 'label_smoothing': 0.1} -> asl_letters:0.830 aslnow:0.858 marxulia:0.915  mean 0.868 (86s)
+[15/16] {'hidden': (128,), 'dropout': 0.25, 'l2': 0.001, 'lr': 0.003, 'batch': 256, 'label_smoothing': 0.05} -> asl_letters:0.812 aslnow:0.841 marxulia:0.905  mean 0.853 (43s)
+[16/16] {'hidden': (64,), 'dropout': 0.25, 'l2': 1e-05, 'lr': 0.0003, 'batch': 64, 'label_smoothing': 0.05} -> asl_letters:0.819 aslnow:0.851 marxulia:0.913  mean 0.861 (137s)
+best config: {'hidden': (128, 128, 64), 'dropout': 0.0, 'l2': 0.0, 'lr': 0.0003, 'batch': 64, 'label_smoothing': 0.1}
+nested asl_letters: chose #6, accuracy 0.837
+nested aslnow: chose #3, accuracy 0.850
+nested marxulia: chose #13, accuracy 0.911
+
+============================
+Hi, looks like you are running TensorFlow.js in Node.js. To speed things up dramatically, install our node backend, visit https://github.com/tensorflow/tfjs-node for more details. 
+============================
+TF.js model written to /home/opc/codered26/web/public/models/asl_tfjs (41560 parameters, classes ABCDEFGHIKLMNOPQRSTUVWXY)
+done in 56.6 min; game letters BCFHIKLNOQVWXY

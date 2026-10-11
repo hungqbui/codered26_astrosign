@@ -1,0 +1,7 @@
+3864 samples, 2882 groups, sources: {np.str_('asl_letters'): 1224, np.str_('aslnow'): 1874, np.str_('marxulia'): 766}
+mlp_128_64           acc 0.959 F1 0.960 (70s)
+logistic_regression  acc 0.953 F1 0.953 (71s)
+knn_5                acc 0.930 F1 0.931 (25s)
+random_forest        acc 0.946 F1 0.947 (110s)
+CV 0.9593685300207039 holdout {np.str_('asl_letters'): {'n': 1224, 'accuracy': 0.8472222222222222, 'macro_f1': 0.8424445036488587, 'accuracy_original': 0.8505747126436781, 'accuracy_flipped': 0.8439024390243902}, np.str_('aslnow'): {'n': 1874, 'accuracy': 0.83991462113127, 'macro_f1': 0.8449867567746862}, np.str_('marxulia'): {'n': 766, 'accuracy': 0.9177545691906005, 'macro_f1': 0.9171853342324323, 'accuracy_original': 0.9116883116883117, 'accuracy_flipped': 0.9238845144356955}}
+game letters: BCDFHILNOQVWXY

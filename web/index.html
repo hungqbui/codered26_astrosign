@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CelestiSign</title>
+  <meta name="description" content="Two-player ASL fingerspelling asteroid duel, controlled with hand tracking through your webcam." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <canvas id="game" aria-label="Game playfield"></canvas>
+  <video id="cam" playsinline muted></video>
+
+  <!-- persistent corner controls -->
+  <div id="corner" class="corner">
+    <button id="btn-pause" class="icon-btn hidden" title="Pause (Esc)" aria-label="Pause"><svg viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></svg></button>
+    <button id="btn-mute" class="icon-btn" title="Mute sound" aria-label="Sound" aria-pressed="false"></button>
+    <button id="btn-motion" class="icon-btn" title="Reduced motion" aria-label="Reduced motion" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg></button>
+  </div>
+
+  <!-- START -->
+  <section id="screen-start" class="screen">
+    <div class="panel hero">
+      <div class="logo">CELESTI<span class="logo-b">SIGN</span></div>
+      <div class="tagline">Two-player ASL fingerspelling duel</div>
+      <div class="mode-pick" role="radiogroup" aria-label="Game mode">
+        <span class="mode-ind" aria-hidden="true"></span>
+        <button class="mode-btn" data-mode="versus" role="radio" aria-checked="true"><b>Versus</b><small>1 vs 1</small></button>
+        <button class="mode-btn" data-mode="boss" role="radio" aria-checked="false"><b>Co-op Boss</b><small>2 vs boss</small></button>
+      </div>
+      <!-- fixed-height stage: the mode's details cross-fade here, so the panel never resizes -->
+      <div class="mode-stage">
+        <div class="mode-pane" data-pane="versus">
+          <span class="chip" data-tip="Fair duel
+Both players get the identical asteroid stream.">Same asteroids</span>
+          <span class="chip" data-tip="Power-up orbs
+Attack, Slow and Leech hit the other player.">Orbs hit rival</span>
+          <span class="chip" data-tip="Win condition
+The last player with health left wins.">Last one standing</span>
+        </div>
+        <div class="mode-pane coop-opts" data-pane="boss" id="coop-opts">
+          <label class="opt" data-tip="Shared power-ups
+Shield, Freeze, Haste, Reflect and Nova help both players."><input type="checkbox" id="opt-share-orbs" />
+            <span><b>Shared power-ups</b></span></label>
+          <label class="opt" data-tip="Shared targets
+Either player can hit anything on either side. Asteroids come faster."><input type="checkbox" id="opt-share-targets" />
+            <span><b>Shared targets</b></span></label>
+        </div>
+      </div>
+      <div class="row">
+        <button id="btn-start" class="btn primary">Start with webcam</button>
+        <button id="btn-keyboard" class="btn ghost">Keyboard mode</button>
+      </div>
+      <div id="powerups" class="powerups"></div>
+      <details class="keys">
+        <summary>Keyboard &amp; developer controls</summary>
+        <ul>
+          <li><kbd>a</kbd>–<kbd>y</kbd> confirm a letter for Player 1, <kbd>Shift</kbd>+letter for Player 2</li>
+          <li><kbd>1</kbd>–<kbd>9</kbd> spawn an orb for P1 (<kbd>Shift</kbd> for P2): Attack, Slow, Shield, Heal, Freeze, Nova, Haste, Reflect, Leech</li>
+          <li><kbd>0</kbd> next level · <kbd>`</kbd> debug overlay · <kbd>Esc</kbd> pause · <kbd>Enter</kbd> continue / rematch</li>
+        </ul>
+      </details>
+    </div>
+  </section>
+
+  <!-- CAMERA SETUP -->
+  <section id="screen-setup" class="screen hidden">
+    <div class="panel setup">
+      <h2>Camera setup</h2>
+      <p id="setup-status" class="status">Starting…</p>
+      <div class="setup-grid">
+        <div class="setup-view"><canvas id="setup-canvas"></canvas></div>
+        <div class="setup-side">
+          <div class="pcard p1" id="setup-p1"><b>Player 1</b><span>left side · either hand</span><em>waiting…</em></div>
+          <div class="pcard p2" id="setup-p2"><b>Player 2</b><span>right side · either hand</span><em>waiting…</em></div>
+          <div class="tips">
+            <span class="tip-chip" data-tip="Side by side
+Player 1 on the left, Player 2 on the right. Either hand works.">
+              <svg viewBox="0 0 24 24"><circle cx="7" cy="7" r="3"/><circle cx="17" cy="7" r="3"/><path d="M2 21v-3a5 5 0 0 1 10 0v3M12 21v-3a5 5 0 0 1 10 0v3"/></svg>Side by side</span>
+            <span class="tip-chip" data-tip="Arm's length
+Keep your playing hand at chest height, palm toward the camera.">
+              <svg viewBox="0 0 24 24"><path d="M3 12h18M3 12l4-4M3 12l4 4M21 12l-4-4M21 12l-4 4"/></svg>Arm's length</span>
+            <span class="tip-chip" data-tip="Good light
+Bright, even light in front of you works best.">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></svg>Good light</span>
+          </div>
+          <label class="check" data-tip="Swap left/right detection
+Each hand is tagged LEFT or RIGHT so the pose hints match it. If the tags are backwards (some cameras mirror the stream), turn this on."><input type="checkbox" id="chk-swap" /> Swap left/right</label>
+          <div class="row">
+            <button id="btn-tutorial" class="btn primary" disabled>Practice</button>
+            <button id="btn-skip" class="btn ghost" disabled>Skip to game</button>
+            <button id="btn-back1" class="btn ghost">Back</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CAMERA ERROR -->
+  <section id="screen-error" class="screen hidden">
+    <div class="panel narrow">
+      <h2 id="err-title">Camera unavailable</h2>
+      <p id="err-msg"></p>
+      <p id="err-help" class="hint"></p>
+      <div class="row">
+        <button id="btn-retry" class="btn primary">Try again</button>
+        <button id="btn-err-keyboard" class="btn ghost">Play with keyboard</button>
+        <button id="btn-back2" class="btn ghost">Back</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TUTORIAL banner -->
+  <section id="screen-tutorial" class="banner hidden">
+    <div class="banner-inner">
+      <b class="banner-title">Practice</b>
+      <span class="banner-text">Hold the pose until the ring fills</span>
+      <span id="tut-progress"></span>
+      <button id="btn-tut-skip" class="btn small ghost">Skip</button>
+    </div>
+  </section>
+
+  <!-- PRACTICE COACH (3-D pose guide, one per player) -->
+  <section id="coach" class="coach-wrap hidden" aria-label="Pose coach"></section>
+
+  <!-- COUNTDOWN -->
+  <section id="screen-countdown" class="screen clear hidden"><div id="count" class="count">3</div></section>
+
+  <!-- PAUSE -->
+  <section id="screen-pause" class="screen hidden">
+    <div class="panel narrow">
+      <h2 id="pause-title">Paused</h2>
+      <p id="pause-msg" class="hint"></p>
+      <div class="row col">
+        <button id="btn-resume" class="btn primary">Resume</button>
+        <button id="btn-restart" class="btn ghost">Restart match</button>
+        <button id="btn-menu" class="btn ghost">Main menu</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section id="screen-results" class="screen hidden">
+    <div class="panel results">
+      <div id="winner" class="winner"></div>
+      <div class="stats">
+        <div class="stat-col p1" id="stats-p1"></div>
+        <div class="stat-col p2" id="stats-p2"></div>
+      </div>
+      <p class="hint" id="rematch-hint">Both players: hold <b>B</b> for a rematch, or press <kbd>Enter</kbd></p>
+      <div class="row">
+        <button id="btn-rematch" class="btn primary">Rematch</button>
+        <button id="btn-menu2" class="btn ghost">Main menu</button>
+      </div>
+    </div>
+  </section>
+
+  <nav id="nav-legend" class="nav-legend hidden" aria-label="Hand navigation"></nav>
+  <div id="toast" class="toast hidden"></div>
+  <pre id="debug" class="debug hidden"></pre>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

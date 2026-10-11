@@ -1,0 +1,4 @@
+.venv/
+.venv-tf/
+data/
+__pycache__/
